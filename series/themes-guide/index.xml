@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Themes Guide on IO01 Blog</title>
+    <link>/series/themes-guide/</link>
+    <description>Recent content in Themes Guide on IO01 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>&amp;copy; {year} &lt;a href=&#34;https://blog.io01.xyz/&#34;&gt;IO01&lt;/a&gt;
+</copyright>
+    <lastBuildDate>Thu, 27 Feb 2020 00:00:00 +0000</lastBuildDate><atom:link href="/series/themes-guide/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>时间格式化的趣事：YYYY 示年</title>
+      <link>/posts/%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%9A%84%E8%B6%A3%E4%BA%8Byyyy%E7%A4%BA%E5%B9%B4/</link>
+      <pubDate>Thu, 27 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%9A%84%E8%B6%A3%E4%BA%8Byyyy%E7%A4%BA%E5%B9%B4/</guid>
+      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
+&lt;p&gt;2019 年 12 月 29 到 31 日在格式化时间时出现了一个有趣的小 bug：比如 2019 年 12 月 31 日时间戳有可能会被格式化成：2020-12-31。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

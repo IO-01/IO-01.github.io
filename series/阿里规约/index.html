@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang='' ><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+<title>阿里规约 | IO01 Blog</title>
+
+<meta name="generator" content="Hugo Eureka 0.8.0" />
+<link rel="stylesheet" href="/css/eureka.min.css">
+<script defer src="/js/eureka.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js"
+   crossorigin></script>
+
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js"
+     crossorigin></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js"
+   integrity="sha256-uNYoXefWRqv&#43;PsIF/OflNmwtKM4lStn9yrz2gVl6ymo="  crossorigin></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+   integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3&#43;Aro6EYUG4&#43;cU&#43;KJWu/X"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" 
+  integrity="sha384-g7c&#43;Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI&#43;sEnkvrMWph2EDg4"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js"
+   integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC&#43;Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js" 
+  integrity="sha256-Zmpaaj&#43;GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE="  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="Eureka is a elegant and powerful theme for Hugo.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Series",
+      "item":"/series/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"阿里规约",
+      "item":"/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/"}]
+}
+</script>
+
+
+
+
+<script type="application/ld+json">
+{
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "itemListElement":[{
+            "@type":"ListItem",
+            "position":  1 ,
+            "name": "从阿里规约谈起-包装类的值比较注意事项",
+            "description": "\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003e\u003ccode\u003eint\u003c/code\u003e、\u003ccode\u003elong\u003c/code\u003e 等基本数据类型值比较可以直接使用 \u003ccode\u003e==\u003c/code\u003e 比较，其包装类型：\u003ccode\u003eInteger\u003c/code\u003e、\u003ccode\u003eLong\u003c/code\u003e 如果直接使用 \u003ccode\u003e==\u003c/code\u003e 比较大小我们会发现一个神奇的现象。当然，阿里规约也对此做出强制规定：\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e【强制】\u003c/strong\u003e 所有的相同类型的包装类对象之间值的比较，全部使用 \u003ccode\u003eequals\u003c/code\u003e 方法比较。\u003c/p\u003e\n\u003c/blockquote\u003e",
+            "url": "/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "从阿里规约谈起-Arrays.asList 三坑",
+            "description": "\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003e将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eList list = Arrays.asList(array);\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是如果操纵 List 的内容的话，阿里规约会给出一个提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_aslist_error.png\" alt=\"使用 asList 的问题\"\u003e\u003c/p\u003e\n\u003cp\u003e于是深入看了下，发现 \u003ccode\u003eArrays.asList\u003c/code\u003e 有三个日常开发中容易坑人的地方。\u003c/p\u003e",
+            "url": "/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "从阿里规约谈起-HashMap 初始化和扩容相关",
+            "description": "\u003ch2 id=\"引言\"\u003e引言\u003c/h2\u003e\n\u003cp\u003e日常开发中使用 HashMap 方法如下：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eMap\u0026lt;String, Object\u0026gt; HashMap = new HashMap\u0026lt;\u0026gt;();\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是阿里规约会提示有问题：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png\" alt=\"未指定初始化容量\"\u003e\u003c/p\u003e\n\u003cp\u003e由此我们可以看一下 HashMap 初始化和扩容相关。\u003c/p\u003e\n\u003cp\u003e注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。\u003c/p\u003e",
+            "url": "/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
+            "name": "从阿里规约谈起-禁用 Executors 创建线程池",
+            "description": "\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003eAndroid 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_new_thread_error.png\" alt=\"直接使用子线程报错\"\u003e\u003c/p\u003e\n\u003cp\u003e关于禁止直接创建线程的原因如图，不再赘述。\u003c/p\u003e",
+            "url": "/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/"
+        }
+    ]
+}
+</script><meta property="og:title" content="阿里规约 | IO01 Blog" />
+<meta property="og:type" content="website" />
+
+
+<meta property="og:image" content="/images/favicon.png">
+
+
+<meta property="og:url" content="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/" />
+
+
+
+
+
+<meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo." />
+
+
+
+
+
+
+
+
+<meta property="og:site_name" content="IO01 Blog" />
+
+
+
+
+
+
+<meta property="og:updated_time" content="2019-11-29T00:00:00&#43;00:00" />
+
+
+
+<meta property="article:section" content="series" />
+
+
+<link rel="alternate" type="application/rss+xml" href="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/index.xml" title="IO01 Blog" />
+
+<body class="flex flex-col min-h-screen">
+  <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+    <div class="w-full max-w-screen-xl mx-auto"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="mr-6 text-primary-text text-xl font-bold">IO01 Blog</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light"></span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark"></span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+  </header>
+  <main class="flex-grow pt-16">
+    <div class="pl-scrollbar">
+      <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+    <h1 class="font-bold text-3xl text-primary-text">阿里规约</h1>
+    
+</article>
+<div class="bg-secondary-bg rounded px-6">
+    <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" class="font-bold text-xl hover:text-eureka">从阿里规约谈起-包装类的值比较注意事项</a>
+</div>
+<div class="content">
+  前言 int、long 等基本数据类型值比较可以直接使用 == 比较，其包装类型：Integer、Long 如果直接使用 == 比较大小我们会发现一个神奇的现象。当然，阿里规约也对此做出强制规定：
+ 【强制】 所有的相同类型的包装类对象之间值的比较，全部使用 equals 方法比较。
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2019-11-29</span>
+    </div>
+    
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/" class="hover:text-eureka">阿里规约</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/" class="font-bold text-xl hover:text-eureka">从阿里规约谈起-Arrays.asList 三坑</a>
+</div>
+<div class="content">
+  前言 将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：
+List list = Arrays.asList(array);  但是如果操纵 List 的内容的话，阿里规约会给出一个提示：
+于是深入看了下，发现 Arrays.asList 有三个日常开发中容易坑人的地方。
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2019-09-24</span>
+    </div>
+    
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/" class="hover:text-eureka">阿里规约</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/" class="font-bold text-xl hover:text-eureka">从阿里规约谈起-HashMap 初始化和扩容相关</a>
+</div>
+<div class="content">
+  引言 日常开发中使用 HashMap 方法如下：
+Map&amp;lt;String, Object&amp;gt; HashMap = new HashMap&amp;lt;&amp;gt;();  但是阿里规约会提示有问题：
+由此我们可以看一下 HashMap 初始化和扩容相关。
+注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2019-08-30</span>
+    </div>
+    
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/" class="hover:text-eureka">阿里规约</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="mb-4">
+  <a href="/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="font-bold text-xl hover:text-eureka">从阿里规约谈起-禁用 Executors 创建线程池</a>
+</div>
+<div class="content">
+  前言 Android 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：
+关于禁止直接创建线程的原因如图，不再赘述。
+
+</div>
+
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+    <div class="mr-6 my-2">
+        <i class="fas fa-calendar mr-1"></i>
+        <span>2019-08-30</span>
+    </div>
+    
+    
+
+    
+    <div class="mr-6 my-2">
+        <i class="fas fa-th-list mr-1"></i>
+        
+        <a href="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/" class="hover:text-eureka">阿里规约</a>
+        
+    </div>
+    
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+</div>
+
+
+</div>
+
+
+      </div>
+    </div>
+    
+  </main>
+  <footer class="pl-scrollbar">
+    <div class="w-full max-w-screen-xl mx-auto"><div class="flex flex-col justify-center p-6">
+    <a class="mx-auto" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">
+        <img src="https://static.fori.fun/blog/posts/img/cc_by_nc_sa.svg" alt="CC BY-NC-SA 4.0"
+            title="本博客均以《署名-非商业性使用-相同方式共享 4.0 国际》协议发布" />
+    </a>
+    <p class="mx-auto pt-2 text-sm text-tertiary-text">&copy; 2021 <a href="https://blog.io01.xyz/">IO01</a>
+
+        &middot;  Powered by the <a href="https://github.com/wangchucheng/hugo-eureka"
+            class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io"
+            class="hover:text-eureka">Hugo</a>
+    </p>
+</div></div>
+  </footer>
+</body>
+
+</html>
