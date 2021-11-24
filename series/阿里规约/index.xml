@@ -1,68 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>阿里规约 on IO01 Blog</title>
-    <link>/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/</link>
-    <description>Recent content in 阿里规约 on IO01 Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <copyright>&amp;copy; {year} &lt;a href=&#34;https://blog.io01.xyz/&#34;&gt;IO01&lt;/a&gt;
-</copyright>
-    <lastBuildDate>Fri, 29 Nov 2019 00:00:00 +0000</lastBuildDate><atom:link href="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>从阿里规约谈起-包装类的值比较注意事项</title>
-      <link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/</link>
-      <pubDate>Fri, 29 Nov 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/</guid>
-      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;int&lt;/code&gt;、&lt;code&gt;long&lt;/code&gt; 等基本数据类型值比较可以直接使用 &lt;code&gt;==&lt;/code&gt; 比较，其包装类型：&lt;code&gt;Integer&lt;/code&gt;、&lt;code&gt;Long&lt;/code&gt; 如果直接使用 &lt;code&gt;==&lt;/code&gt; 比较大小我们会发现一个神奇的现象。当然，阿里规约也对此做出强制规定：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;【强制】&lt;/strong&gt; 所有的相同类型的包装类对象之间值的比较，全部使用 &lt;code&gt;equals&lt;/code&gt; 方法比较。&lt;/p&gt;
-&lt;/blockquote&gt;</description>
-    </item>
-    
-    <item>
-      <title>从阿里规约谈起-Arrays.asList 三坑</title>
-      <link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/</link>
-      <pubDate>Tue, 24 Sep 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/</guid>
-      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;List list = Arrays.asList(array);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;但是如果操纵 List 的内容的话，阿里规约会给出一个提示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://static.fori.fun/blog/posts/img/p3c_aslist_error.png&#34; alt=&#34;使用 asList 的问题&#34;&gt;&lt;/p&gt;
-&lt;p&gt;于是深入看了下，发现 &lt;code&gt;Arrays.asList&lt;/code&gt; 有三个日常开发中容易坑人的地方。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>从阿里规约谈起-HashMap 初始化和扩容相关</title>
-      <link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/</link>
-      <pubDate>Fri, 30 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/</guid>
-      <description>&lt;h2 id=&#34;引言&#34;&gt;引言&lt;/h2&gt;
-&lt;p&gt;日常开发中使用 HashMap 方法如下：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;Map&amp;lt;String, Object&amp;gt; HashMap = new HashMap&amp;lt;&amp;gt;();
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;但是阿里规约会提示有问题：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png&#34; alt=&#34;未指定初始化容量&#34;&gt;&lt;/p&gt;
-&lt;p&gt;由此我们可以看一下 HashMap 初始化和扩容相关。&lt;/p&gt;
-&lt;p&gt;注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>从阿里规约谈起-禁用 Executors 创建线程池</title>
-      <link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/</link>
-      <pubDate>Fri, 30 Aug 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/</guid>
-      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;Android 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://static.fori.fun/blog/posts/img/p3c_new_thread_error.png&#34; alt=&#34;直接使用子线程报错&#34;&gt;&lt;/p&gt;
-&lt;p&gt;关于禁止直接创建线程的原因如图，不再赘述。&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>阿里规约 on IO01 Blog</title><link>/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/</link><description>Recent content in 阿里规约 on IO01 Blog</description><generator>Hugo -- gohugo.io</generator><copyright>&amp;copy; {year} &lt;a href="https://blog.io01.xyz/">IO01&lt;/a></copyright><lastBuildDate>Fri, 29 Nov 2019 00:00:00 +0000</lastBuildDate><atom:link href="/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/index.xml" rel="self" type="application/rss+xml"/><item><title>从阿里规约谈起-包装类的值比较注意事项</title><link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/</link><pubDate>Fri, 29 Nov 2019 00:00:00 +0000</pubDate><guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/</guid><description>&lt;h2 id="前言">前言&lt;/h2>
+&lt;p>&lt;code>int&lt;/code>、&lt;code>long&lt;/code> 等基本数据类型值比较可以直接使用 &lt;code>==&lt;/code> 比较，其包装类型：&lt;code>Integer&lt;/code>、&lt;code>Long&lt;/code> 如果直接使用 &lt;code>==&lt;/code> 比较大小我们会发现一个神奇的现象。当然，阿里规约也对此做出强制规定：&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>【强制】&lt;/strong> 所有的相同类型的包装类对象之间值的比较，全部使用 &lt;code>equals&lt;/code> 方法比较。&lt;/p>
+&lt;/blockquote></description></item><item><title>从阿里规约谈起-Arrays.asList 三坑</title><link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/</link><pubDate>Tue, 24 Sep 2019 00:00:00 +0000</pubDate><guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/</guid><description>&lt;h2 id="前言">前言&lt;/h2>
+&lt;p>将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：&lt;/p>
+&lt;pre>&lt;code class="language-java">List list = Arrays.asList(array);
+&lt;/code>&lt;/pre>
+&lt;p>但是如果操纵 List 的内容的话，阿里规约会给出一个提示：&lt;/p>
+&lt;p>&lt;img src="https://static.fori.fun/blog/posts/img/p3c_aslist_error.png" alt="使用 asList 的问题">&lt;/p>
+&lt;p>于是深入看了下，发现 &lt;code>Arrays.asList&lt;/code> 有三个日常开发中容易坑人的地方。&lt;/p></description></item><item><title>从阿里规约谈起-HashMap 初始化和扩容相关</title><link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/</link><pubDate>Fri, 30 Aug 2019 00:00:00 +0000</pubDate><guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/</guid><description>&lt;h2 id="引言">引言&lt;/h2>
+&lt;p>日常开发中使用 HashMap 方法如下：&lt;/p>
+&lt;pre>&lt;code class="language-java">Map&amp;lt;String, Object&amp;gt; HashMap = new HashMap&amp;lt;&amp;gt;();
+&lt;/code>&lt;/pre>
+&lt;p>但是阿里规约会提示有问题：&lt;/p>
+&lt;p>&lt;img src="https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png" alt="未指定初始化容量">&lt;/p>
+&lt;p>由此我们可以看一下 HashMap 初始化和扩容相关。&lt;/p>
+&lt;p>注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。&lt;/p></description></item><item><title>从阿里规约谈起-禁用 Executors 创建线程池</title><link>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/</link><pubDate>Fri, 30 Aug 2019 00:00:00 +0000</pubDate><guid>/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/</guid><description>&lt;h2 id="前言">前言&lt;/h2>
+&lt;p>Android 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：&lt;/p>
+&lt;p>&lt;img src="https://static.fori.fun/blog/posts/img/p3c_new_thread_error.png" alt="直接使用子线程报错">&lt;/p>
+&lt;p>关于禁止直接创建线程的原因如图，不再赘述。&lt;/p></description></item></channel></rss>

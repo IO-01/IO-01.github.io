@@ -1,23 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Kotlin on IO01 Blog</title>
-    <link>/tags/kotlin/</link>
-    <description>Recent content in Kotlin on IO01 Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <copyright>&amp;copy; {year} &lt;a href=&#34;https://blog.io01.xyz/&#34;&gt;IO01&lt;/a&gt;
-</copyright>
-    <lastBuildDate>Fri, 18 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/kotlin/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>遵循 Google 应用指南的 Retrofit &#43; Coroutine 封装</title>
-      <link>/posts/%E9%81%B5%E5%BE%AA-google-%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97%E7%9A%84-retrofit-&#43;-coroutine-%E5%B0%81%E8%A3%85/</link>
-      <pubDate>Fri, 18 Jun 2021 00:00:00 +0000</pubDate>
-      
-      <guid>/posts/%E9%81%B5%E5%BE%AA-google-%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97%E7%9A%84-retrofit-&#43;-coroutine-%E5%B0%81%E8%A3%85/</guid>
-      <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;Retrofit 从 2.6.0 以后对 Kotlin 协程提供了原生支持，使得异步请求从写法上更像同步调用，配合 Google 出的 Jetpack 全家桶可以使得网络请求更加优雅简单，而且可以完全遵循 Google 给出的应用架构指南。&lt;/p&gt;
-&lt;p&gt;另外我们有一个更加多样的需求：我们的应用使用了多套服务接口，每套接口返回的参数模板不同，baseUrl 则更多样化，因此带来了更复杂的封装逻辑。&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kotlin on IO01 Blog</title><link>/tags/kotlin/</link><description>Recent content in Kotlin on IO01 Blog</description><generator>Hugo -- gohugo.io</generator><copyright>&amp;copy; {year} &lt;a href="https://blog.io01.xyz/">IO01&lt;/a></copyright><lastBuildDate>Fri, 18 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/kotlin/index.xml" rel="self" type="application/rss+xml"/><item><title>遵循 Google 应用指南的 Retrofit + Coroutine 封装</title><link>/posts/%E9%81%B5%E5%BE%AA-google-%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97%E7%9A%84-retrofit-+-coroutine-%E5%B0%81%E8%A3%85/</link><pubDate>Fri, 18 Jun 2021 00:00:00 +0000</pubDate><guid>/posts/%E9%81%B5%E5%BE%AA-google-%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97%E7%9A%84-retrofit-+-coroutine-%E5%B0%81%E8%A3%85/</guid><description>&lt;h2 id="前言">前言&lt;/h2>
+&lt;p>Retrofit 从 2.6.0 以后对 Kotlin 协程提供了原生支持，使得异步请求从写法上更像同步调用，配合 Google 出的 Jetpack 全家桶可以使得网络请求更加优雅简单，而且可以完全遵循 Google 给出的应用架构指南。&lt;/p>
+&lt;p>另外我们有一个更加多样的需求：我们的应用使用了多套服务接口，每套接口返回的参数模板不同，baseUrl 则更多样化，因此带来了更复杂的封装逻辑。&lt;/p></description></item></channel></rss>
