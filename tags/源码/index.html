@@ -1,6 +1,6 @@
 <!doctype html><html lang><meta charset=utf-8>
 <meta name=viewport content="width=device-width">
-<title>IO01 Blog</title>
+<title>源码 | IO01 Blog</title>
 <meta name=generator content="Hugo Eureka 0.8.0">
 <link rel=stylesheet href=/css/eureka.min.css>
 <script defer src=/js/eureka.min.js></script>
@@ -18,15 +18,16 @@
 <link rel=icon type=image/png sizes=32x32 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_32x32_fill_box_center_3.png>
 <link rel=apple-touch-icon sizes=180x180 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png>
 <meta name=description content="Eureka is a elegant and powerful theme for Hugo.">
-<meta property="og:title" content="IO01 Blog">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Tags","item":"/tags/"},{"@type":"ListItem","position":2,"name":"源码","item":"/tags/%E6%BA%90%E7%A0%81/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动","description":"引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能决定的，多个 Intent Flag 都能改变启动的行为","url":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"}]}</script><meta property="og:title" content="源码 | IO01 Blog">
 <meta property="og:type" content="website">
 <meta property="og:image" content="/images/favicon.png">
-<meta property="og:url" content="/">
+<meta property="og:url" content="/tags/%E6%BA%90%E7%A0%81/">
 <meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo.">
 <meta property="og:site_name" content="IO01 Blog">
 <meta property="og:updated_time" content="2021-09-16T00:00:00+00:00">
-<meta property="article:section" content>
-<link rel=alternate type=application/rss+xml href=/index.xml title="IO01 Blog">
+<meta property="article:section" content="tags">
+<link rel=alternate type=application/rss+xml href=/tags/%E6%BA%90%E7%A0%81/index.xml title="IO01 Blog">
 <body class="flex flex-col min-h-screen">
 <header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
 <div class="w-full max-w-screen-xl mx-auto"><script>let storageColorScheme=localStorage.getItem("lightDarkMode");((storageColorScheme=='Auto'||storageColorScheme==null)&&window.matchMedia("(prefers-color-scheme: dark)").matches||storageColorScheme=="Dark")&&document.getElementsByTagName('html')[0].classList.add('dark')</script>
@@ -62,6 +63,9 @@
 <main class="flex-grow pt-16">
 <div class=pl-scrollbar>
 <div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<article class="mx-6 my-8">
+<h1 class="font-bold text-3xl text-primary-text">源码</h1>
+</article>
 <div class="bg-secondary-bg rounded px-6">
 <div class="overflow-hidden divide-y">
 <div class=py-6>
@@ -82,131 +86,8 @@
 </div>
 </div>
 </div>
-<div class=py-6>
-<div class="flex flex-col-reverse lg:flex-row justify-between">
-<div class=w-full>
-<div class=mb-4>
-<a href=/posts/%E9%81%B5%E5%BE%AA-google-%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97%E7%9A%84-retrofit-+-coroutine-%E5%B0%81%E8%A3%85/ class="font-bold text-xl hover:text-eureka">遵循 Google 应用指南的 Retrofit + Coroutine 封装</a>
-</div>
-<div class=content>
-前言 Retrofit 从 2.6.0 以后对 Kotlin 协程提供了原生支持，使得异步请求从写法上更像同步调用，配合 Google 出的 Jetpack 全家桶可以使得网络请求更加优雅简单，而且可以完全遵循 Google 给出的应用架构指南。
-另外我们有一个更加多样的需求：我们的应用使用了多套服务接口，每套接口返回的参数模板不同，baseUrl 则更多样化，因此带来了更复杂的封装逻辑。
-</div>
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-<div class="mr-6 my-2">
-<i class="fas fa-calendar mr-1"></i>
-<span>2021-06-18</span>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class=py-6>
-<div class="flex flex-col-reverse lg:flex-row justify-between">
-<div class=w-full>
-<div class=mb-4>
-<a href=/posts/%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%9A%84%E8%B6%A3%E4%BA%8Byyyy%E7%A4%BA%E5%B9%B4/ class="font-bold text-xl hover:text-eureka">时间格式化的趣事：YYYY 示年</a>
-</div>
-<div class=content>
-引言 2019 年 12 月 29 到 31 日在格式化时间时出现了一个有趣的小 bug：比如 2019 年 12 月 31 日时间戳有可能会被格式化成：2020-12-31。
-</div>
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-<div class="mr-6 my-2">
-<i class="fas fa-calendar mr-1"></i>
-<span>2020-02-27</span>
-</div>
-<div class="mr-6 my-2">
-<i class="fas fa-th-list mr-1"></i>
-<a href=/series/themes-guide/ class=hover:text-eureka>Themes Guide</a>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class=py-6>
-<div class="flex flex-col-reverse lg:flex-row justify-between">
-<div class=w-full>
-<div class=mb-4>
-<a href=/posts/md5%E8%AE%A1%E7%AE%97%E5%89%8D%E5%AF%BC0%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/ class="font-bold text-xl hover:text-eureka">MD5 计算前导 0 丢失问题</a>
-</div>
-<div class=content>
-现象 我们使用 Java 生成 MD5 时常用的写法如下：
-private static String md5(String data) throws NoSuchAlgorithmException { MessageDigest md = MessageDigest.getInstance(&amp;quot;MD5&amp;quot;); md.update(data.getBytes()); return new BigInteger(1, md.digest()).toString(16); } 如果计算 a 的 MD5 会发现结果为 cc175b9c0f1b6a831c399e269772661，只有 31 位，正确的值应该是 0cc175b9c0f1b6a831c399e269772661，仔细观察可以发现我们的计算方法把第一位 0 丢失了。
-</div>
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-<div class="mr-6 my-2">
-<i class="fas fa-calendar mr-1"></i>
-<span>2020-01-20</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class=py-6>
-<div class="flex flex-col-reverse lg:flex-row justify-between">
-<div class=w-full>
-<div class=mb-4>
-<a href=/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/ class="font-bold text-xl hover:text-eureka">从阿里规约谈起-包装类的值比较注意事项</a>
-</div>
-<div class=content>
-前言 int、long 等基本数据类型值比较可以直接使用 == 比较，其包装类型：Integer、Long 如果直接使用 == 比较大小我们会发现一个神奇的现象。当然，阿里规约也对此做出强制规定：
-【强制】 所有的相同类型的包装类对象之间值的比较，全部使用 equals 方法比较。
-</div>
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-<div class="mr-6 my-2">
-<i class="fas fa-calendar mr-1"></i>
-<span>2019-11-29</span>
-</div>
-<div class="mr-6 my-2">
-<i class="fas fa-th-list mr-1"></i>
-<a href=/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/ class=hover:text-eureka>阿里规约</a>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class=py-6>
-<div class="flex flex-col-reverse lg:flex-row justify-between">
-<div class=w-full>
-<div class=mb-4>
-<a href=/posts/%E6%9C%89%E8%B6%A3%E7%9A%84%E7%AE%97%E6%B3%95-%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/ class="font-bold text-xl hover:text-eureka">有趣的算法-布隆过滤器</a>
-</div>
-<div class=content>
-引言 现在假设一个需求：设计一个url黑名单系统，需求是1亿个url黑名单，每个url平均长度30字节，判断当前的url是否在黑名单中。
-我们最先想到的可能时HashSet，如果少量的url，HashSet有着O(1)的查询效率是首选的方案。但是面对1亿个url，单单存储value就需要2861MB内存，显然不可取。而如果放到硬盘上进行数据库查询，面对近3GB的数据库，每次匹配都要查询的话，IO操作本身就是瓶颈。
-所以这时候引入了布隆过滤器。
-</div>
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-<div class="mr-6 my-2">
-<i class="fas fa-calendar mr-1"></i>
-<span>2019-10-30</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<ul class="pagination pagination-default">
-<li class="page-item disabled">
-<a href=# aria-disabled=true aria-label=First class=page-link role=button tabindex=-1><span aria-hidden=true>&#171;&#171;</span></a>
-</li>
-<li class="page-item disabled">
-<a href=# aria-disabled=true aria-label=Previous class=page-link role=button tabindex=-1><span aria-hidden=true>&#171;</span></a>
-</li>
-<li class="page-item active">
-<a href=# aria-current=page aria-label="Page 1" class=page-link role=button>1</a>
-</li>
-<li class=page-item>
-<a href=/page/2/ aria-label="Page 2" class=page-link role=button>2</a>
-</li>
-<li class=page-item>
-<a href=/page/2/ aria-label=Next class=page-link role=button><span aria-hidden=true>&#187;</span></a>
-</li>
-<li class=page-item>
-<a href=/page/2/ aria-label=Last class=page-link role=button><span aria-hidden=true>&#187;&#187;</span></a>
-</li>
-</ul>
 </div>
 </div>
 </main>

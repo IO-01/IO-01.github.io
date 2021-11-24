@@ -18,13 +18,13 @@
 <link rel=icon type=image/png sizes=32x32 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_32x32_fill_box_center_3.png>
 <link rel=apple-touch-icon sizes=180x180 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png>
 <meta name=description content="Eureka is a elegant and powerful theme for Hugo.">
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"从阿里规约谈起-HashMap 初始化和扩容相关","description":"\u003ch2 id=\"引言\"\u003e引言\u003c/h2\u003e\n\u003cp\u003e日常开发中使用 HashMap 方法如下：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eMap\u0026lt;String, Object\u0026gt; HashMap = new HashMap\u0026lt;\u0026gt;();\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是阿里规约会提示有问题：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png\" alt=\"未指定初始化容量\"\u003e\u003c/p\u003e\n\u003cp\u003e由此我们可以看一下 HashMap 初始化和扩容相关。\u003c/p\u003e\n\u003cp\u003e注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/"},{"@type":"ListItem","position":2,"name":"从阿里规约谈起-禁用 Executors 创建线程池","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003eAndroid 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_new_thread_error.png\" alt=\"直接使用子线程报错\"\u003e\u003c/p\u003e\n\u003cp\u003e关于禁止直接创建线程的原因如图，不再赘述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/"},{"@type":"ListItem","position":3,"name":"","description":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能","url":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"}]}</script><meta property="og:title" content="Posts | IO01 Blog">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"从阿里规约谈起-Arrays.asList 三坑","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003e将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eList list = Arrays.asList(array);\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是如果操纵 List 的内容的话，阿里规约会给出一个提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_aslist_error.png\" alt=\"使用 asList 的问题\"\u003e\u003c/p\u003e\n\u003cp\u003e于是深入看了下，发现 \u003ccode\u003eArrays.asList\u003c/code\u003e 有三个日常开发中容易坑人的地方。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/"},{"@type":"ListItem","position":2,"name":"从阿里规约谈起-HashMap 初始化和扩容相关","description":"\u003ch2 id=\"引言\"\u003e引言\u003c/h2\u003e\n\u003cp\u003e日常开发中使用 HashMap 方法如下：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eMap\u0026lt;String, Object\u0026gt; HashMap = new HashMap\u0026lt;\u0026gt;();\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是阿里规约会提示有问题：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png\" alt=\"未指定初始化容量\"\u003e\u003c/p\u003e\n\u003cp\u003e由此我们可以看一下 HashMap 初始化和扩容相关。\u003c/p\u003e\n\u003cp\u003e注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/"},{"@type":"ListItem","position":3,"name":"从阿里规约谈起-禁用 Executors 创建线程池","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003eAndroid 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_new_thread_error.png\" alt=\"直接使用子线程报错\"\u003e\u003c/p\u003e\n\u003cp\u003e关于禁止直接创建线程的原因如图，不再赘述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/"}]}</script><meta property="og:title" content="Posts | IO01 Blog">
 <meta property="og:type" content="website">
 <meta property="og:image" content="/images/favicon.png">
 <meta property="og:url" content="/posts/">
 <meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo.">
 <meta property="og:site_name" content="IO01 Blog">
-<meta property="og:updated_time" content="2021-06-18T00:00:00+00:00">
+<meta property="og:updated_time" content="2021-09-16T00:00:00+00:00">
 <meta property="article:section" content="posts">
 <link rel=alternate type=application/rss+xml href=/posts/index.xml title="IO01 Blog">
 <body class="flex flex-col min-h-screen">
@@ -71,6 +71,30 @@
 <div class="flex flex-col-reverse lg:flex-row justify-between">
 <div class=w-full>
 <div class=mb-4>
+<a href=/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/ class="font-bold text-xl hover:text-eureka">从阿里规约谈起-Arrays.asList 三坑</a>
+</div>
+<div class=content>
+前言 将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：
+List list = Arrays.asList(array); 但是如果操纵 List 的内容的话，阿里规约会给出一个提示：
+于是深入看了下，发现 Arrays.asList 有三个日常开发中容易坑人的地方。
+</div>
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+<div class="mr-6 my-2">
+<i class="fas fa-calendar mr-1"></i>
+<span>2019-09-24</span>
+</div>
+<div class="mr-6 my-2">
+<i class="fas fa-th-list mr-1"></i>
+<a href=/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/ class=hover:text-eureka>阿里规约</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class=py-6>
+<div class="flex flex-col-reverse lg:flex-row justify-between">
+<div class=w-full>
+<div class=mb-4>
 <a href=/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/ class="font-bold text-xl hover:text-eureka">从阿里规约谈起-HashMap 初始化和扩容相关</a>
 </div>
 <div class=content>
@@ -110,24 +134,6 @@ Map&amp;lt;String, Object&amp;gt; HashMap = new HashMap&amp;lt;&amp;gt;(); 但�
 <div class="mr-6 my-2">
 <i class="fas fa-th-list mr-1"></i>
 <a href=/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/ class=hover:text-eureka>阿里规约</a>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class=py-6>
-<div class="flex flex-col-reverse lg:flex-row justify-between">
-<div class=w-full>
-<div class=mb-4>
-<a href=/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/ class="font-bold text-xl hover:text-eureka"></a>
-</div>
-<div class=content>
-深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能
-</div>
-<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
-<div class="mr-6 my-2">
-<i class="fas fa-calendar mr-1"></i>
-<span>0001-01-01</span>
 </div>
 </div>
 </div>
