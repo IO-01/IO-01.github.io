@@ -130,7 +130,7 @@ stringData[0] = &quot;A&quot;;
 System.out.println(&quot;stringList: &quot; + stringList);
 //输出：stringList: [A, b, c]
 </code></pre>
-<p>根据 <code>Arrays.ArrayList</code> 构造函数可以看到，只是将原数组赋值给了一个内部变量，所以改变原数组的值，List 自然而然也会发生变化:</p>
+<p>根据 <code>Arrays.ArrayList</code> 构造函数可以看到，只是将原数组赋值给了一个内部变量，所以改变原数组的值，List 自然而然也会发生变化：</p>
 <pre><code class=language-java>ArrayList(E[] array) {
     a = Objects.requireNonNull(array);
 }

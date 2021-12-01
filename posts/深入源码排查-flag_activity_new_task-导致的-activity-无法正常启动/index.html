@@ -19,7 +19,7 @@
 <link rel=apple-touch-icon sizes=180x180 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png>
 <meta name=description content="引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能决定的，多个 Intent Flag 都能改变启动的行为">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"/posts/"},{"@type":"ListItem","position":2,"name":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动","item":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"},"headline":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog","datePublished":"2021-09-16T00:00:00+00:00","dateModified":"2021-09-16T00:00:00+00:00","wordCount":4743,"publisher":{"@type":"Person","name":"C. Wang","logo":{"@type":"ImageObject","url":"/images/favicon.png"}},"description":"引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能决定的，多个 Intent Flag 都能改变启动的行为"}</script><meta property="og:title" content="深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"},"headline":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog","datePublished":"2021-09-16T00:00:00+00:00","dateModified":"2021-09-16T00:00:00+00:00","wordCount":4678,"publisher":{"@type":"Person","name":"C. Wang","logo":{"@type":"ImageObject","url":"/images/favicon.png"}},"description":"引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能决定的，多个 Intent Flag 都能改变启动的行为"}</script><meta property="og:title" content="深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog">
 <meta property="og:type" content="article">
 <meta property="og:image" content="/images/favicon.png">
 <meta property="og:url" content="/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/">
@@ -415,8 +415,7 @@ if (mResumedActivity == next &amp;&amp; next.isState(RESUMED)
 </li>
 <li>
 <p>A_Activity 启动 B_Activity：</p>
-<pre><code class=language-kotlin>finish()//注：此处 finish 和异常无关，仅为业务需求，即使去掉也会发生异常
-startActivity(Intent(this, BActivity::class.java))
+<pre><code class=language-kotlin>startActivity(Intent(this, BActivity::class.java))
 </code></pre>
 </li>
 <li>
@@ -428,7 +427,7 @@ startActivity(Intent(this, BActivity::class.java))
 </ol>
 <p>此时会出现 B_Activity 没有新建实例，而是会回调 <code>onRestart</code> 启动了第一次创建的 B_Activity。</p>
 <h3 id=源码追踪-1>源码追踪</h3>
-<p>根据上面的分析我们轻车熟路了，这又是某些 case 下没有创建 B_Activity 的实例而直接回调的 <code>onResume</code> 导致的。但是之前无法启动 A_Activity 是因为添加了 <code>FLAG_ACTIVITY_NEW_TASK</code>，然而现在启动 B_Activity 可什么 Flag 都没加，就是最简单的 <code>startActivity</code>，B_Activity的 launchMode 也是最基本的 <code>standard</code>。</p>
+<p>根据上面的分析我们轻车熟路了，这又是某些 case 下没有创建 B_Activity 的实例而直接回调的 <code>onResume</code> 导致的。但是之前无法启动 A_Activity 是因为添加了 <code>FLAG_ACTIVITY_NEW_TASK</code>，然而现在启动 B_Activity 可什么 Flag 都没加，就是最简单的 <code>startActivity</code>，B_Activity 的 launchMode 也是最基本的 <code>standard</code>。</p>
 <p>其实原因依然隐藏在源码中，<code>startActivityInner</code> 会调用 <code>computeLaunchingTaskFlags</code> 来计算启动时的 Flag：</p>
 <pre><code class=language-java>private void computeLaunchingTaskFlags() {
     ……
@@ -449,15 +448,14 @@ startActivity(Intent(this, BActivity::class.java))
 </code></pre>
 <p>在不指定启动栈时，三种情况下系统会默认给 Flag 加上 <code>FLAG_ACTIVITY_NEW_TASK</code>:</p>
 <ol>
-<li>没有源 Activity（比如A启动B，则A为源 Activity）</li>
+<li>没有源 Activity（比如 A 启动 B，则 A 为源 Activity）</li>
 <li>源 Activity 的 launchMode 是 <code>singleInstance</code></li>
 <li>待启动 Activity 的 launchMode 是 <code>singleInstance</code> 或 <code>singleTask</code></li>
 </ol>
 <p>原因就显而易见了，我们的 A_Activity 的 launchMode 是 <code>singleInstance</code>，所以系统给 Flag 加上了 <code>FLAG_ACTIVITY_NEW_TASK</code>，于是又回到了之前分析的场景中。</p>
 <h3 id=解决办法-1>解决办法</h3>
 <p>解决办法上一个场景中也给出了，启动 B_Activity 时加上 <code>FLAG_ACTIVITY_MULTIPLE_TASK</code>即可：</p>
-<pre><code class=language-kotlin>finish()//注：此处 finish 和异常无关，仅为业务需求
-startActivity(
+<pre><code class=language-kotlin>startActivity(
     Intent(this, BActivity::class.java)
         .apply { addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK) })
 </code></pre>
