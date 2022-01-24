@@ -19,7 +19,7 @@
 <link rel=apple-touch-icon sizes=180x180 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png>
 <meta name=description content="引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能决定的，多个 Intent Flag 都能改变启动的行为">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"/posts/"},{"@type":"ListItem","position":2,"name":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动","item":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"},"headline":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog","datePublished":"2021-09-16T00:00:00+00:00","dateModified":"2021-09-16T00:00:00+00:00","wordCount":4678,"publisher":{"@type":"Person","name":"C. Wang","logo":{"@type":"ImageObject","url":"/images/favicon.png"}},"description":"引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能决定的，多个 Intent Flag 都能改变启动的行为"}</script><meta property="og:title" content="深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/"},"headline":"深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog","datePublished":"2021-09-16T00:00:00+00:00","dateModified":"2021-09-16T00:00:00+00:00","wordCount":4751,"publisher":{"@type":"Person","name":"C. Wang","logo":{"@type":"ImageObject","url":"/images/favicon.png"}},"description":"引言 众所周知 Android 中 Activity 有四种启动模式，决定了是否创建新的 Activity 实例或复用当前实例。但是实际上 Activity 的启动十分复杂，不单单是 android:launchMode 就能决定的，多个 Intent Flag 都能改变启动的行为"}</script><meta property="og:title" content="深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动 | IO01 Blog">
 <meta property="og:type" content="article">
 <meta property="og:image" content="/images/favicon.png">
 <meta property="og:url" content="/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/">
@@ -95,7 +95,7 @@
 <p>这是我们最熟知的启动模式，但是需要注意的是：上述行为模式仅限于未添加任何 Flag，并且没有改变 taskAffinity 的前提下。</p>
 <h3 id=service-启动-activity>Service 启动 Activity</h3>
 <p>如前所述，如果单纯的 Activity 启动 Activiy 且不添加任何 Flag 是没问题的，但是如果我们使用 Service 启动 Activity 就会遇到一个异常，在 Framework（本文 Framework 源码均来自 Android 11 版本）的源码中会抛出异常：</p>
-<pre><code class=language-java>//android.app.ContextImpl
+<pre><code class=language-java>// android.app.ContextImpl
 @Override
 public void startActivity(Intent intent, Bundle options) {
     ……
@@ -157,7 +157,7 @@ startActivity(Intent(this, AActivity::class.java).apply { addFlags(Intent.FLAG_A
 <h3 id=源码追踪>源码追踪</h3>
 <h4 id=startactivityinner>startActivityInner</h4>
 <p>Framework 的 Activity 启动源码非常繁杂，但是真正对 Activity 栈进行操作的函数是 <code>ActivityStarter#startActivityInner</code>，所以我们将着重分析这个方法。</p>
-<pre><code class=language-java>//com.android.server.wm.ActivityStarter
+<pre><code class=language-java>// com.android.server.wm.ActivityStarter
 int startActivityInner(final ActivityRecord r, ActivityRecord sourceRecord,
         IVoiceInteractionSession voiceSession, IVoiceInteractor voiceInteractor,
         int startFlags, boolean doResume, ActivityOptions options, Task inTask,
@@ -200,7 +200,7 @@ int startActivityInner(final ActivityRecord r, ActivityRecord sourceRecord,
 <p>由于 <code>startActivityInner</code> 方法依然比较长，所以将只看几个可能产生影响的地方，对任务栈有影响的关键方法是 <code>getReusableTask</code> 和 <code>recycleTask</code>。</p>
 <h4 id=getreusabletask>getReusableTask</h4>
 <p>首先先看看 <code>getReusableTask</code> 的源码：</p>
-<pre><code class=language-java>//com.android.server.wm.ActivityStarter
+<pre><code class=language-java>// com.android.server.wm.ActivityStarter
 private Task getReusableTask() {
     // 新 Activity 放到现有任务栈中的条件：
     // 1. Flags 包含 FLAG_ACTIVITY_NEW_TASK 但是不包含 FLAG_ACTIVITY_MULTIPLE_TASK
@@ -232,7 +232,7 @@ private Task getReusableTask() {
 <p>根据上述源码，由于我们的 Flags 中包含 <code>FLAG_ACTIVITY_NEW_TASK</code> 但是不包含 <code>FLAG_ACTIVITY_MULTIPLE_TASK</code>，所以会从现有的任务栈中寻找一个最合适的任务栈并将待启动的 Activity 插入其中，在我们举的例子中，会获取到 B_Activity 所在的任务栈。</p>
 <h4 id=recycletask>recycleTask</h4>
 <p>接着来看看 <code>recycleTask</code> 的源码：</p>
-<pre><code class=language-java>//com.android.server.wm.ActivityStarter
+<pre><code class=language-java>// com.android.server.wm.ActivityStarter
 int recycleTask(Task targetTask, ActivityRecord targetTaskTop, Task reusedTask,
         NeededUriGrants intentGrants) {
     // 不同用户下不回收任务栈，直接启动 Activity 并添加到任务栈中
@@ -272,7 +272,7 @@ int recycleTask(Task targetTask, ActivityRecord targetTaskTop, Task reusedTask,
 }
 </code></pre>
 <p>根据单步调试，我们可以知道 <code>recycleTask</code> 返回的结果是 <code>START_DELIVERED_TO_TOP</code>，在 <code>startActivityInner</code> 中 <code>recycleTask</code> 部分的相关代码是：</p>
-<pre><code class=language-java>//com.android.server.wm.ActivityStarter#startActivityInner
+<pre><code class=language-java>// com.android.server.wm.ActivityStarter#startActivityInner
 startResult = recycleTask(targetTask, targetTaskTop, reusedTask, intentGrants);
 if (startResult != START_SUCCESS) {
     return startResult;
@@ -286,7 +286,7 @@ if (startResult != START_SUCCESS) {
 <li>根据 <code>mMovedToFront</code> 判断返回为 <code>START_TASK_TO_FRONT</code> 还是 <code>START_DELIVERED_TO_TOP</code>，关联的方法是 <code>setTargetStackIfNeeded</code>，由于上一步已经断绝了返回 <code>START_SUCCESS</code> 的可能，无法正常创建一个 Activity 实例了，就不再分析此方法。</li>
 </ol>
 <h4 id=complyactivityflags>complyActivityFlags</h4>
-<pre><code class=language-java>//com.android.server.wm.ActivityStarter
+<pre><code class=language-java>// com.android.server.wm.ActivityStarter
 private void complyActivityFlags(Task targetTask, ActivityRecord reusedActivity,
         NeededUriGrants intentGrants) {
     ActivityRecord targetTaskTop = targetTask.getTopNonFinishingActivity();
@@ -306,7 +306,7 @@ private void complyActivityFlags(Task targetTask, ActivityRecord reusedActivity,
     } else if ((mLaunchFlags &amp; FLAG_ACTIVITY_CLEAR_TOP) != 0
             || isDocumentLaunchesIntoExisting(mLaunchFlags)
             || isLaunchModeOneOf(LAUNCH_SINGLE_INSTANCE, LAUNCH_SINGLE_TASK)) {
-        // 如果设置了 FLAG_ACTIVITY_CLEAR_TOP；文档模式；launchMode 是 singleInstance 或 singleTask
+        // 如果设置了 FLAG_ACTIVITY_CLEAR_TOP；android:documentLaunchMode（最近任务列表相关属性）的值是 intoExisting，代表 Activity 重复使用文档的现有任务；launchMode 是 singleInstance 或 singleTask
         // 清除待启动 Activity 在任务栈之上的所有 Activity
         final ActivityRecord top = targetTask.performClearTaskForReuseLocked(mStartActivity,
                 mLaunchFlags);
@@ -381,7 +381,7 @@ private void complyActivityFlags(Task targetTask, ActivityRecord reusedActivity,
 <p>当我们单步调试进 <code>complyActivityFlags</code> 会发现，只设置了 <code>FLAG_ACTIVITY_NEW_TASK</code>，没有设置 <code>FLAG_ACTIVITY_CLEAR_TASK</code>、<code>FLAG_ACTIVITY_CLEAR_TOP</code>、<code>FLAG_ACTIVITY_REORDER_TO_FRONT</code>；启动模式是 <code>standard</code>；虽然待启动 Activity 的完整组件名如果和目标栈启动栈的 Activity 相同，但是却又不符合下面的所有判断；虽然可以进入 <code>!resetTask</code> 的分支却被上一个分支截胡……总之完美避过了所有能正常启动的 case。</p>
 <h4 id=resumetopactivityinnerlocked>resumeTopActivityInnerLocked</h4>
 <p>那么不能创建新的 Activity 实例会发生什么呢，这就需要关注 <code>recycleTask</code> 中的一个方法：<code>resumeTargetStackIfNeeded</code>，位于 <code>complyActivityFlags</code> 之后，用于将目标返回栈栈顶的 Activity 回调 <code>onResume</code> 方法，即虽然没有启动 A_Activity，但是把 B_Activity 给重新可见了。由于调用链路过长不多分析，但是层层调用后有一点需要关注，在 <code>ActivityStack#resumeTopActivityInnerLocked</code> 中：</p>
-<pre><code class=language-java>//com.android.server.wm.ActivityStack#resumeTopActivityInnerLocked
+<pre><code class=language-java>// com.android.server.wm.ActivityStack#resumeTopActivityInnerLocked
 if (mResumedActivity == next &amp;&amp; next.isState(RESUMED)
         &amp;&amp; taskDisplayArea.allResumedActivitiesComplete()) {
     executeAppTransition(options);
@@ -429,7 +429,8 @@ if (mResumedActivity == next &amp;&amp; next.isState(RESUMED)
 <h3 id=源码追踪-1>源码追踪</h3>
 <p>根据上面的分析我们轻车熟路了，这又是某些 case 下没有创建 B_Activity 的实例而直接回调的 <code>onResume</code> 导致的。但是之前无法启动 A_Activity 是因为添加了 <code>FLAG_ACTIVITY_NEW_TASK</code>，然而现在启动 B_Activity 可什么 Flag 都没加，就是最简单的 <code>startActivity</code>，B_Activity 的 launchMode 也是最基本的 <code>standard</code>。</p>
 <p>其实原因依然隐藏在源码中，<code>startActivityInner</code> 会调用 <code>computeLaunchingTaskFlags</code> 来计算启动时的 Flag：</p>
-<pre><code class=language-java>private void computeLaunchingTaskFlags() {
+<pre><code class=language-java>// com.android.server.wm.ActivityStarter
+private void computeLaunchingTaskFlags() {
     ……
     if (mInTask == null) {
         if (mSourceRecord == null) {
@@ -529,7 +530,7 @@ if (mResumedActivity == next &amp;&amp; next.isState(RESUMED)
 <a class=mx-auto href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank>
 <img src=https://static.fori.fun/blog/posts/img/cc_by_nc_sa.svg alt="CC BY-NC-SA 4.0" title="本博客均以《署名-非商业性使用-相同方式共享 4.0 国际》协议发布">
 </a>
-<p class="mx-auto pt-2 text-sm text-tertiary-text">&copy; 2021 <a href=https://blog.io01.xyz/>IO01</a>
+<p class="mx-auto pt-2 text-sm text-tertiary-text">&copy; 2022 <a href=https://blog.io01.xyz/>IO01</a>
 &#183; Powered by the <a href=https://github.com/wangchucheng/hugo-eureka class=hover:text-eureka>Eureka</a> theme for <a href=https://gohugo.io class=hover:text-eureka>Hugo</a>
 </p>
 </div></div>
