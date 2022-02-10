@@ -18,13 +18,13 @@
 <link rel=icon type=image/png sizes=32x32 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_32x32_fill_box_center_3.png>
 <link rel=apple-touch-icon sizes=180x180 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png>
 <meta name=description content="Eureka is a elegant and powerful theme for Hugo.">
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"有趣的算法-布隆过滤器","description":"\u003ch2 id=\"引言\"\u003e引言\u003c/h2\u003e\n\u003cp\u003e现在假设一个需求：设计一个 url 黑名单系统，需求是 1 亿个 url 黑名单，每个 url 平均长度 30 字节，判断当前的 url 是否在黑名单中。\u003c/p\u003e\n\u003cp\u003e我们最先想到的可能时 HashSet，如果少量的 url，HashSet 有着 O(1) 的查询效率是首选的方案。但是面对 1 亿个 url，单单存储 value 就需要 2861MB 内存，显然不可取。而如果放到硬盘上进行数据库查询，面对近 3GB 的数据库，每次匹配都要查询的话，IO 操作本身就是瓶颈。\u003c/p\u003e\n\u003cp\u003e所以这时候引入了布隆过滤器。\u003c/p\u003e","url":"/posts/%E6%9C%89%E8%B6%A3%E7%9A%84%E7%AE%97%E6%B3%95-%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/"},{"@type":"ListItem","position":2,"name":"从阿里规约谈起-Arrays.asList 三坑","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003e将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eList list = Arrays.asList(array);\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是如果操纵 List 的内容的话，阿里规约会给出一个提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_aslist_error.png\" alt=\"使用 asList 的问题\"\u003e\u003c/p\u003e\n\u003cp\u003e于是深入看了下，发现 \u003ccode\u003eArrays.asList\u003c/code\u003e 有三个日常开发中容易坑人的地方。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/"},{"@type":"ListItem","position":3,"name":"从阿里规约谈起-HashMap 初始化和扩容相关","description":"\u003ch2 id=\"引言\"\u003e引言\u003c/h2\u003e\n\u003cp\u003e日常开发中使用 HashMap 方法如下：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eMap\u0026lt;String, Object\u0026gt; HashMap = new HashMap\u0026lt;\u0026gt;();\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是阿里规约会提示有问题：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png\" alt=\"未指定初始化容量\"\u003e\u003c/p\u003e\n\u003cp\u003e由此我们可以看一下 HashMap 初始化和扩容相关。\u003c/p\u003e\n\u003cp\u003e注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/"},{"@type":"ListItem","position":4,"name":"从阿里规约谈起-禁用 Executors 创建线程池","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003eAndroid 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_new_thread_error.png\" alt=\"直接使用子线程报错\"\u003e\u003c/p\u003e\n\u003cp\u003e关于禁止直接创建线程的原因如图，不再赘述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/"}]}</script><meta property="og:title" content="Posts | IO01 Blog">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"name":"从阿里规约谈起-包装类的值比较注意事项","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003e\u003ccode\u003eint\u003c/code\u003e、\u003ccode\u003elong\u003c/code\u003e 等基本数据类型值比较可以直接使用 \u003ccode\u003e==\u003c/code\u003e 比较，其包装类型：\u003ccode\u003eInteger\u003c/code\u003e、\u003ccode\u003eLong\u003c/code\u003e 如果直接使用 \u003ccode\u003e==\u003c/code\u003e 比较大小我们会发现一个神奇的现象。当然，阿里规约也对此做出强制规定：\u003c/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003e\u003cstrong\u003e【强制】\u003c/strong\u003e 所有的相同类型的包装类对象之间值的比较，全部使用 \u003ccode\u003eequals\u003c/code\u003e 方法比较。\u003c/p\u003e\n\u003c/blockquote\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/"},{"@type":"ListItem","position":2,"name":"有趣的算法-布隆过滤器","description":"\u003ch2 id=\"引言\"\u003e引言\u003c/h2\u003e\n\u003cp\u003e现在假设一个需求：设计一个 url 黑名单系统，需求是 1 亿个 url 黑名单，每个 url 平均长度 30 字节，判断当前的 url 是否在黑名单中。\u003c/p\u003e\n\u003cp\u003e我们最先想到的可能时 HashSet，如果少量的 url，HashSet 有着 O(1) 的查询效率是首选的方案。但是面对 1 亿个 url，单单存储 value 就需要 2861MB 内存，显然不可取。而如果放到硬盘上进行数据库查询，面对近 3GB 的数据库，每次匹配都要查询的话，IO 操作本身就是瓶颈。\u003c/p\u003e\n\u003cp\u003e所以这时候引入了布隆过滤器。\u003c/p\u003e","url":"/posts/%E6%9C%89%E8%B6%A3%E7%9A%84%E7%AE%97%E6%B3%95-%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/"},{"@type":"ListItem","position":3,"name":"从阿里规约谈起-Arrays.asList 三坑","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003e将数组转换成 List 是日常开发十分常见的操作，对此 JDK 提供了一个非常好用的工具类：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eList list = Arrays.asList(array);\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是如果操纵 List 的内容的话，阿里规约会给出一个提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_aslist_error.png\" alt=\"使用 asList 的问题\"\u003e\u003c/p\u003e\n\u003cp\u003e于是深入看了下，发现 \u003ccode\u003eArrays.asList\u003c/code\u003e 有三个日常开发中容易坑人的地方。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-arrays.aslist%E4%B8%89%E5%9D%91/"},{"@type":"ListItem","position":4,"name":"从阿里规约谈起-HashMap 初始化和扩容相关","description":"\u003ch2 id=\"引言\"\u003e引言\u003c/h2\u003e\n\u003cp\u003e日常开发中使用 HashMap 方法如下：\u003c/p\u003e\n\u003cpre\u003e\u003ccode class=\"language-java\"\u003eMap\u0026lt;String, Object\u0026gt; HashMap = new HashMap\u0026lt;\u0026gt;();\n\u003c/code\u003e\u003c/pre\u003e\n\u003cp\u003e但是阿里规约会提示有问题：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png\" alt=\"未指定初始化容量\"\u003e\u003c/p\u003e\n\u003cp\u003e由此我们可以看一下 HashMap 初始化和扩容相关。\u003c/p\u003e\n\u003cp\u003e注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-hashmap%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E6%89%A9%E5%AE%B9%E7%9B%B8%E5%85%B3/"},{"@type":"ListItem","position":5,"name":"从阿里规约谈起-禁用 Executors 创建线程池","description":"\u003ch2 id=\"前言\"\u003e前言\u003c/h2\u003e\n\u003cp\u003eAndroid 开发中耗时任务应该放在子线程中进行，否则会阻塞 UI 造成 ANR。但是如果直接创建子线程，阿里规约会提示：\u003c/p\u003e\n\u003cp\u003e\u003cimg src=\"https://static.fori.fun/blog/posts/img/p3c_new_thread_error.png\" alt=\"直接使用子线程报错\"\u003e\u003c/p\u003e\n\u003cp\u003e关于禁止直接创建线程的原因如图，不再赘述。\u003c/p\u003e","url":"/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E7%A6%81%E7%94%A8executors%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B%E6%B1%A0/"}]}</script><meta property="og:title" content="Posts | IO01 Blog">
 <meta property="og:type" content="website">
 <meta property="og:image" content="/images/favicon.png">
 <meta property="og:url" content="/posts/">
 <meta property="og:description" content="Eureka is a elegant and powerful theme for Hugo.">
 <meta property="og:site_name" content="IO01 Blog">
-<meta property="og:updated_time" content="2021-11-29T00:00:00+00:00">
+<meta property="og:updated_time" content="2022-01-06T00:00:00+00:00">
 <meta property="article:section" content="posts">
 <link rel=alternate type=application/rss+xml href=/posts/index.xml title="IO01 Blog">
 <body class="flex flex-col min-h-screen">
@@ -67,6 +67,29 @@
 </article>
 <div class="bg-secondary-bg rounded px-6">
 <div class="overflow-hidden divide-y">
+<div class=py-6>
+<div class="flex flex-col-reverse lg:flex-row justify-between">
+<div class=w-full>
+<div class=mb-4>
+<a href=/posts/%E4%BB%8E%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6%E8%B0%88%E8%B5%B7-%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9A%84%E5%80%BC%E6%AF%94%E8%BE%83%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/ class="font-bold text-xl hover:text-eureka">从阿里规约谈起-包装类的值比较注意事项</a>
+</div>
+<div class=content>
+前言 int、long 等基本数据类型值比较可以直接使用 == 比较，其包装类型：Integer、Long 如果直接使用 == 比较大小我们会发现一个神奇的现象。当然，阿里规约也对此做出强制规定：
+【强制】 所有的相同类型的包装类对象之间值的比较，全部使用 equals 方法比较。
+</div>
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+<div class="mr-6 my-2">
+<i class="fas fa-calendar mr-1"></i>
+<span>2019-11-29</span>
+</div>
+<div class="mr-6 my-2">
+<i class="fas fa-th-list mr-1"></i>
+<a href=/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/ class=hover:text-eureka>阿里规约</a>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class=py-6>
 <div class="flex flex-col-reverse lg:flex-row justify-between">
 <div class=w-full>

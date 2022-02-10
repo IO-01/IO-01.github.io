@@ -1,0 +1,733 @@
+<!doctype html><html lang><meta charset=utf-8>
+<meta name=viewport content="width=device-width">
+<title>子线程更新 UI 全解 | IO01 Blog</title>
+<meta name=generator content="Hugo Eureka 0.8.0">
+<link rel=stylesheet href=/css/eureka.min.css>
+<script defer src=/js/eureka.min.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=preload href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" as=style onload="this.onload=null,this.rel='stylesheet'">
+<link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css media=print onload="this.media='all',this.onload=null" crossorigin>
+<script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js integrity="sha256-uNYoXefWRqv+PsIF/OflNmwtKM4lStn9yrz2gVl6ymo=" crossorigin></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X media=print onload="this.media='all',this.onload=null" crossorigin>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin></script>
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script>
+<script defer src=https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js integrity="sha256-Zmpaaj+GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE=" crossorigin></script>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_32x32_fill_box_center_3.png>
+<link rel=apple-touch-icon sizes=180x180 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png>
+<meta name=description content="子线程更新 UI 异常设计理念及简单源码解析 初学者可能会犯在子线程更新 UI 的错误，例如： thread { imageView.setBackgroundColor(Color.RED) } 一旦运行，应用会直接崩溃并抛出异常，这也是我们 Android 开发的一条铁律">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"/posts/"},{"@type":"ListItem","position":2,"name":"子线程更新 UI 全解","item":"/posts/%E5%AD%90%E7%BA%BF%E7%A8%8B%E6%9B%B4%E6%96%B0-ui-%E5%85%A8%E8%A7%A3/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/%E5%AD%90%E7%BA%BF%E7%A8%8B%E6%9B%B4%E6%96%B0-ui-%E5%85%A8%E8%A7%A3/"},"headline":"子线程更新 UI 全解 | IO01 Blog","datePublished":"2022-01-06T00:00:00+00:00","dateModified":"2022-01-06T00:00:00+00:00","wordCount":5493,"publisher":{"@type":"Person","name":"C. Wang","logo":{"@type":"ImageObject","url":"/images/favicon.png"}},"description":"子线程更新 UI 异常设计理念及简单源码解析 初学者可能会犯在子线程更新 UI 的错误，例如： thread { imageView.setBackgroundColor(Color.RED) } 一旦运行，应用会直接崩溃并抛出异常，这也是我们 Android 开发的一条铁律"}</script><meta property="og:title" content="子线程更新 UI 全解 | IO01 Blog">
+<meta property="og:type" content="article">
+<meta property="og:image" content="/images/favicon.png">
+<meta property="og:url" content="/posts/%E5%AD%90%E7%BA%BF%E7%A8%8B%E6%9B%B4%E6%96%B0-ui-%E5%85%A8%E8%A7%A3/">
+<meta property="og:description" content="子线程更新 UI 异常设计理念及简单源码解析 初学者可能会犯在子线程更新 UI 的错误，例如： thread { imageView.setBackgroundColor(Color.RED) } 一旦运行，应用会直接崩溃并抛出异常，这也是我们 Android 开发的一条铁律">
+<meta property="og:site_name" content="IO01 Blog">
+<meta property="article:published_time" content="2022-01-06T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-01-06T00:00:00+00:00">
+<meta property="article:section" content="posts">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="源码">
+<meta property="og:see_also" content="/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/">
+<meta property="og:see_also" content="/posts/%E9%81%B5%E5%BE%AA-google-%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97%E7%9A%84-retrofit-+-coroutine-%E5%B0%81%E8%A3%85/">
+<body class="flex flex-col min-h-screen">
+<header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+<div class="w-full max-w-screen-xl mx-auto"><script>let storageColorScheme=localStorage.getItem("lightDarkMode");((storageColorScheme=='Auto'||storageColorScheme==null)&&window.matchMedia("(prefers-color-scheme: dark)").matches||storageColorScheme=="Dark")&&document.getElementsByTagName('html')[0].classList.add('dark')</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+<a href=/ class="mr-6 text-primary-text text-xl font-bold">IO01 Blog</a>
+<button id=navbar-btn class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+<i class="fas fa-bars"></i>
+</button>
+<div id=target class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+<div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+</div>
+<div class=flex>
+<div class="relative pt-4 md:pt-0">
+<div class="cursor-pointer hover:text-eureka" id=lightDarkMode>
+<i class="fas fa-adjust"></i>
+</div>
+<div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id=is-open>
+</div>
+<div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40" id=lightDarkOptions>
+<span class="px-4 py-1 hover:text-eureka" name=Light></span>
+<span class="px-4 py-1 hover:text-eureka" name=Dark></span>
+<span class="px-4 py-1 hover:text-eureka" name=Auto></span>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id=is-open-mobile>
+</div>
+</nav>
+<script>let element=document.getElementById('lightDarkMode');storageColorScheme==null||storageColorScheme=='Auto'?document.addEventListener('DOMContentLoaded',()=>{window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',switchDarkMode)}):storageColorScheme=="Light"?(element.firstElementChild.classList.remove('fa-adjust'),element.firstElementChild.setAttribute("data-icon",'sun'),element.firstElementChild.classList.add('fa-sun')):storageColorScheme=="Dark"&&(element.firstElementChild.classList.remove('fa-adjust'),element.firstElementChild.setAttribute("data-icon",'moon'),element.firstElementChild.classList.add('fa-moon')),document.addEventListener('DOMContentLoaded',()=>{getcolorscheme(),switchBurger()})</script>
+</div>
+</header>
+<main class="flex-grow pt-16">
+<div class=pl-scrollbar>
+<div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+<div class="col-span-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+<h1 class="font-bold text-3xl text-primary-text">子线程更新 UI 全解</h1>
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+<div class="mr-6 my-2">
+<i class="fas fa-calendar mr-1"></i>
+<span>2022-01-06</span>
+</div>
+</div>
+<div class=content>
+<h2 id=子线程更新-ui-异常设计理念及简单源码解析>子线程更新 UI 异常设计理念及简单源码解析</h2>
+<p>初学者可能会犯在子线程更新 UI 的错误，例如：</p>
+<pre><code class=language-kotlin>thread { imageView.setBackgroundColor(Color.RED) }
+</code></pre>
+<p>一旦运行，应用会直接崩溃并抛出异常，这也是我们 Android 开发的一条铁律：<em>在子线程中不能更新 UI</em>。</p>
+<p>那么为什么 Android 不让子线程更新 UI 呢？原因在于现在屏幕刷新率最低是 60Hz，意味着最多每 16ms 就会刷新一次屏幕，所以 UI 更新要尽可能快速，否则会丢帧导致卡顿。那么 UI 更新操作就不能加锁，频繁的加锁释放锁可能会延长 UI 渲染时间，但是不加锁如果允许子线程更新 UI 会导致多个线程对 UI 同时更新，造成线程不安全而导致 UI 最终效果无法想象，所以 Android 直接限制了子线程更新 UI，实际上不只是 Android 有这种限制，常见的 UI 框架基本都是单线程模型。</p>
+<p>了解了设计理念，我们从源码的角度来分析一下，本文 Framework 源码均来自 Android 11 版本。</p>
+<p>首先我们先从 Log 的角度分析，错误日志是：</p>
+<pre><code class=language-java>android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
+   at android.view.ViewRootImpl.checkThread(ViewRootImpl.java:8798)
+   at android.view.ViewRootImpl.requestLayout(ViewRootImpl.java:1606)
+   at android.view.View.requestLayout(View.java:25390)
+   ...
+   at android.view.View.setBackgroundColor(View.java:23617)
+</code></pre>
+<p>可以看到从<code>View#setBackgroundColor()</code>起层层调用之后会到达<code>ViewRootImpl#checkThread()</code>，然后抛出了异常，<code>ViewRootImpl#checkThread()</code> 方法是：</p>
+<pre><code class=language-java>// android.view.ViewRootImpl
+void checkThreadcheckThread() {
+   if (mThread != Thread.currentThread()) {
+      throw new CalledFromWrongThreadException(
+               &quot;Only the original thread that created a view hierarchy can touch its views.&quot;);
+   }
+}
+</code></pre>
+<p>仅有一个功能：判断当前线程跟 <code>mThread</code> 是否一致，如果不一致就抛出异常。继而可以看到 <code>mThread</code> 是在 <code>ViewRootImpl</code> 构造方法中被初始化的：</p>
+<pre><code class=language-java>// android.view.ViewRootImpl
+ public ViewRootImpl(Context context, Display display, IWindowSession session,
+      boolean useSfChoreographer) {
+   ...
+   mThread = Thread.currentThread();
+   ...
+}
+</code></pre>
+<p>所以原因很清楚了：当前调用的线程不是 <code>ViewRootImpl</code> 的构造方法中初始化的线程就会抛出异常。但是这仅仅知其然，想要知其所以然还得继续深入源码进行分析。</p>
+<h2 id=深入源码追踪>深入源码追踪</h2>
+<p>从 <code>imageView.setBackgroundColor()</code> 开始，根据调用链可以得到对 <code>View#requestLayout()</code> 的调用：</p>
+<pre><code class=language-java>// android.view.View#setBackgroundDrawable
+if (requestLayout) {
+   requestLayout();
+}
+</code></pre>
+<p>那么重点看一下 <code>View#requestLayout()</code> 的源码：</p>
+<pre><code class=language-java>// android.view.View
+public void requestLayout() {
+   if (mMeasureCache != null) mMeasureCache.clear();
+
+   // 如果 View 树正在 Layout 流程时有 View 调用 requestLayout()，则将此 View 加入到 ViewRootImpl 的队列中
+   if (mAttachInfo != null &amp;&amp; mAttachInfo.mViewRequestingLayout == null) {
+      // Only trigger request-during-layout logic if this is the view requesting it,
+      // not the views in its parent hierarchy
+      ViewRootImpl viewRoot = getViewRootImpl();
+      if (viewRoot != null &amp;&amp; viewRoot.isInLayout()) {
+            if (!viewRoot.requestLayoutDuringLayout(this)) {
+               return;
+            }
+      }
+      mAttachInfo.mViewRequestingLayout = this;
+   }
+
+   mPrivateFlags |= PFLAG_FORCE_LAYOUT;
+   mPrivateFlags |= PFLAG_INVALIDATED;
+
+   // 如果当前 View 存在 ViewParent，且 isLayoutRequested() 为 false 则调用 ViewParent 的 requestLayout()
+   if (mParent != null &amp;&amp; !mParent.isLayoutRequested()) {
+      mParent.requestLayout();
+   }
+   if (mAttachInfo != null &amp;&amp; mAttachInfo.mViewRequestingLayout == this) {
+      mAttachInfo.mViewRequestingLayout = null;
+   }
+}
+</code></pre>
+<p>View 的 <code>requestLayout()</code> 会调用其父布局的 <code>requestLayout()</code>，ViewGrop 并没有重写这个方法，所以还是调用的 View 的 <code>requestLayout()</code>，即一直递归到最上层。所以我们看一下最上层的 View 是什么。</p>
+<h3 id=activity-的顶层-view>Activity 的顶层 View</h3>
+<p>首先我们先从 <code>onCreate()</code> 中的 <code>setContentView()</code> 方法看我们创建的布局的父 View 是谁（为了分析简单，我们的 Activity 继承自 <code>android.app.Activity</code>，而非 <code>androidx.appcompat.app.AppCompatActivity</code>）：</p>
+<pre><code class=language-java>// android.app.Activity
+public void setContentView(@LayoutRes int layoutResID) {
+   getWindow().setContentView(layoutResID);
+   initWindowDecorActionBar();
+}
+</code></pre>
+<p><code>getWindow()</code>得到的是 <code>attach()</code>中创建的 <code>PhoneWindow</code> 对象：</p>
+<pre><code class=language-java>// android.app.Activity#attach
+mWindow = new PhoneWindow(this, window, activityConfigCallback);
+</code></pre>
+<p>所以去 <code>PhoneWindow</code> 的 <code>setContentView()</code> 中一探究竟：</p>
+<pre><code class=language-java>// com.android.internal.policy.PhoneWindow
+public void setContentView(int layoutResID) {
+   if (mContentParent == null) {
+      installDecor();
+   } else if (!hasFeature(FEATURE_CONTENT_TRANSITIONS)) {
+      mContentParent.removeAllViews();
+   }
+
+   if (hasFeature(FEATURE_CONTENT_TRANSITIONS)) {
+      // 共享元素动画相关
+      final Scene newScene = Scene.getSceneForLayout(mContentParent, layoutResID,
+               getContext());
+      transitionTo(newScene);
+   } else {
+      mLayoutInflater.inflate(layoutResID, mContentParent);
+   }
+}
+</code></pre>
+<p>我们传入的 <code>layoutResID</code> 通过 <code>mLayoutInflater.inflate(layoutResID, mContentParent)</code> 将 xml 布局加载到 <code>mContentParent</code> 中，那么就要看看 <code>mContentParent</code> 是怎么创建出来的，即<code>installDecor()</code>：</p>
+<pre><code class=language-java>// com.android.internal.policy.PhoneWindow
+private void installDecor() {
+   mForceDecorInstall = false;
+   if (mDecor == null) {
+      mDecor = generateDecor(-1);
+      mDecor.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+      mDecor.setIsRootNamespace(true);
+      if (!mInvalidatePanelMenuPosted &amp;&amp; mInvalidatePanelMenuFeatures != 0) {
+            mDecor.postOnAnimation(mInvalidatePanelMenuRunnable);
+      }
+   } else {
+      mDecor.setWindow(this);
+   }
+   if (mContentParent == null) {
+      mContentParent = generateLayout(mDecor);
+      ...
+   }
+}
+</code></pre>
+<p>首先需要了解 DecorView 是一个 FrameLayout 的子类，上述源码通过 <code>generateDecor()</code> 创建出一个 DecorView 赋值给 <code>mDecor</code>，然后通过 <code>generateLayout()</code> 创建出一个 ViewGroup 赋值给 <code>mContentParent</code>，所以我们重点关注这两个方法：</p>
+<pre><code class=language-java>// com.android.internal.policy.PhoneWindow
+protected DecorView generateDecor(int featureId) {
+   Context context;
+   if (mUseDecorContext) {
+      Context applicationContext = getContext().getApplicationContext();
+      if (applicationContext == null) {
+            context = getContext();
+      } else {
+            context = new DecorContext(applicationContext, this);
+            if (mTheme != -1) {
+               context.setTheme(mTheme);
+            }
+      }
+   } else {
+      context = getContext();
+   }
+   return new DecorView(context, featureId, this, getAttributes());
+}
+</code></pre>
+<p>处理完 context 之后就直接 new 了一个 DecorView 对象，所以继续看 <code>generateLayout()</code>：</p>
+<pre><code class=language-java>// com.android.internal.policy.PhoneWindow
+protected ViewGroup generateLayout(DecorView decor) {
+   ...
+   // 前面会根据不同的 window feature 使用不同的布局文件，比如 FEATURE_NO_TITLE 就是没有标题栏的布局
+   mDecor.onResourcesLoaded(mLayoutInflater, layoutResource);
+
+   ViewGroup contentParent = (ViewGroup)findViewById(ID_ANDROID_CONTENT);
+   ...
+   return contentParent;
+}
+</code></pre>
+<p>假设通过上面 feature 条件判断最后的布局文件是 <code>R.layout.screen_simple</code>，源码为：</p>
+<pre><code class=language-xml>&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;
+    android:fitsSystemWindows=&quot;true&quot;
+    android:orientation=&quot;vertical&quot;&gt;
+    &lt;ViewStub android:id=&quot;@+id/action_mode_bar_stub&quot;
+              android:inflatedId=&quot;@+id/action_mode_bar&quot;
+              android:layout=&quot;@layout/action_mode_bar&quot;
+              android:layout_width=&quot;match_parent&quot;
+              android:layout_height=&quot;wrap_content&quot;
+              android:theme=&quot;?attr/actionBarTheme&quot; /&gt;
+    &lt;FrameLayout
+         android:id=&quot;@android:id/content&quot;
+         android:layout_width=&quot;match_parent&quot;
+         android:layout_height=&quot;match_parent&quot;
+         android:foregroundInsidePadding=&quot;false&quot;
+         android:foregroundGravity=&quot;fill_horizontal|top&quot;
+         android:foreground=&quot;?android:attr/windowContentOverlay&quot; /&gt;
+&lt;/LinearLayout&gt;
+</code></pre>
+<p>可以看到该布局是一个 LinearLayout 布局，包括一个 id 为 <code>action_mode_bar_stub</code> 的 用 ViewStub 引用的 ActionBar，一个 id 为 <code>@android:id/content</code> 的 FrameLayout。</p>
+<p>继续跟踪 <code>onResourcesLoaded()</code> 方法，看看布局文件和 DecorView 的关系：</p>
+<pre><code class=language-java>// com.android.internal.policy.PhoneWindow
+void onResourcesLoaded(LayoutInflater inflater, int layoutResource) {
+   ...
+   final View root = inflater.inflate(layoutResource, null);
+   if (mDecorCaptionView != null) {
+      if (mDecorCaptionView.getParent() == null) {
+            addView(mDecorCaptionView,
+                  new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+      }
+      mDecorCaptionView.addView(root,
+               new ViewGroup.MarginLayoutParams(MATCH_PARENT, MATCH_PARENT));
+   } else {
+
+      // Put it below the color views.
+      addView(root, 0, new ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+   }
+   mContentRoot = (ViewGroup) root;
+   initializeElevation();
+}
+</code></pre>
+<p>可以看到将布局文件加载成 View 然后添加到 DecorView 中。然后继续看 <code>generateLayout()</code> 剩下的代码是 <code>findViewById(ID_ANDROID_CONTENT)</code>：</p>
+<pre><code class=language-java>// android.view.Window
+public &lt;T extends View&gt; T findViewById(@IdRes int id) {
+   return getDecorView().findViewById(id);
+}
+</code></pre>
+<p><code>ID_ANDROID_CONTENT</code> 的值是 <code>com.android.internal.R.id.content</code>，这个 id 实际对应的就是上面 xml 文件中的 id 为 <code>@android:id/content</code> 的 FrameLayout，所以 <code>mContentParent</code> 就是那个 LinearLayout 的子 View，至此我们完成了对 Activity 中 View 父布局的完整链路追踪。</p>
+<p>View 递归父布局小结：开发者的 xml 生成的布局 -> mContentParent（FragmentLayout）-> 系统内置布局文件生成的 View（LinearLayout）-> mDecor（DecorView）。</p>
+<h3 id=decorview-的-viewparent>DecorView 的 ViewParent</h3>
+<p>虽然我们已经得到 DecorView 是顶层 View，但是问题没有真正解决：如果 DecorView 没有父 View，最后递归 <code>requestLayout()</code> 岂不是就此终结相当于什么都没干？其实我们一直说递归查找父 <em>View</em> 的说法是不准确的，应该说递归查找 <em>ViewParent</em>，DecorView 虽然没有父 <em>View</em> 了，但是它依然有 <em>ViewParent</em>。但是这个过程不能像上面那样自下而上追溯，而是自上而下先了解了 Activity 生命周期的流程才能得到。</p>
+<p>我们先看看 <code>ActivityThread#handleResumeActivity()</code> 的源码：</p>
+<pre><code class=language-java>// com.android.internal.app.ActivityThread
+public void handleResumeActivity(IBinder token, boolean finalStateRequest, boolean isForward,
+      String reason) {
+   ...
+   final ActivityClientRecord r = performResumeActivity(token, finalStateRequest, reason);
+   ...
+   final Activity a = r.activity;
+   ...
+   boolean willBeVisible = !a.mStartedActivity;
+   ...
+   if (r.window == null &amp;&amp; !a.mFinished &amp;&amp; willBeVisible) {
+      r.window = r.activity.getWindow();
+      View decor = r.window.getDecorView();
+      decor.setVisibility(View.INVISIBLE);
+      ViewManager wm = a.getWindowManager();
+      WindowManager.LayoutParams l = r.window.getAttributes();
+      ...
+      if (a.mVisibleFromClient) {
+            if (!a.mWindowAdded) {
+               a.mWindowAdded = true;
+               wm.addView(decor, l);
+            }
+            ...
+      }
+   }
+}
+</code></pre>
+<p>这些代码真正需要我们分析的只有一行：<code>wm.addView(decor, l)</code>，这个方法的作用是将 DecorView 添加到 WindowManager 中。找到 WindowManager 的实现类是 <code>WindowManagerImpl</code>，<code>addView</code> 的源码如下：</p>
+<pre><code class=language-java>// android.view.WindowManagerImpl
+public void addView(@NonNull View view, @NonNull ViewGroup.LayoutParams params) {
+   applyDefaultToken(params);
+   mGlobal.addView(view, params, mContext.getDisplayNoVerify(), mParentWindow,
+            mContext.getUserId());
+}
+</code></pre>
+<p>继续追踪 <code>mGlobal.addview()</code> 的源码：</p>
+<pre><code class=language-java>// android.view.WindowManagerGlobal
+public void addView(View view, ViewGroup.LayoutParams params,
+      Display display, Window parentWindow, int userId) {
+
+   ViewRootImpl root;
+   View panelParentView = null;
+
+   synchronized (mLock) {
+      ...
+      root = new ViewRootImpl(view.getContext(), display);
+
+      view.setLayoutParams(wparams);
+
+      mViews.add(view);
+      mRoots.add(root);
+      mParams.add(wparams);
+
+      // do this last because it fires off messages to start doing things
+      try {
+            root.setView(view, wparams, panelParentView, userId);
+      } catch (RuntimeException e) {
+            // BadTokenException or InvalidDisplayException, clean up.
+            if (index &gt;= 0) {
+               removeViewLocked(index, true);
+            }
+            throw e;
+      }
+   }
+}
+</code></pre>
+<p>可以看到实例化了一个 ViewRootImpl 对象，并且将 DecorView 传入了 <code>setView()</code> 中，那么继续追踪：</p>
+<pre><code class=language-java>// android.view.ViewRootImpl
+public void setView(View view, WindowManager.LayoutParams attrs, View panelParentView,
+      int userId) {
+   synchronized (this) {
+      if (mView == null) {
+         ...
+         view.assignParent(this);
+         ...
+      }
+   }
+}
+</code></pre>
+<p>这个方法非常长，但是我们只是为了追踪 DecorView 的 ViewParent，所以只需要追踪一行 <code>view.assignParent(this)</code>，DecorView 没有重写，一致追踪到 View 的该方法：</p>
+<pre><code class=language-java>// android.view.View
+void assignParent(ViewParent parent) {
+   if (mParent == null) {
+      mParent = parent;
+   } else if (parent == null) {
+      mParent = null;
+   } else {
+      throw new RuntimeException(&quot;view &quot; + this + &quot; being added, but&quot;
+               + &quot; it already has a parent&quot;);
+   }
+}
+</code></pre>
+<p>所以问题解决，DecorView 的 ViewParent 是 ViewRootImpl。</p>
+<h3 id=viewrootimpl-的-requestlayout>ViewRootImpl 的 requestLayout</h3>
+<p>终于可以回归正题，看看 ViewRootImpl 的 <code>requestLayout()</code> 做了些什么：</p>
+<pre><code class=language-java>// android.view.ViewRootImpl
+public void requestLayout() {
+   if (!mHandlingLayoutInLayoutRequest) {
+      checkThread();
+      mLayoutRequested = true;
+      scheduleTraversals();
+   }
+}
+</code></pre>
+<p>终于看到了我们熟悉的 checkThread()，回归到最初简要分析时的结论了：当前调用的线程不是 ViewRootImpl 的构造方法中初始化的线程就会抛出异常。</p>
+<p>那么 ViewRootImpl 初始化的方法在什么线程呢，<code>ActivityThread#handleResumeActivity()</code> 导致了 ViewRootImpl 的初始化，又因为 ActivityThread 所在线程是主线程，所以 ViewRootImpl 初始化的方法在主线程。</p>
+<p>其实通过深入源码分析得到的链路很清晰：</p>
+<ol>
+<li>
+<p>子线程更新 View 会调用 <code>View#requestLayout()</code>，然后开始递归查找父 View，找到了 Activity 的顶层 View 是 DecorView。</p>
+</li>
+<li>
+<p>DecorView 的 ViewParent 是 ViewRootImpl，所以调用了 <code>ViewRootImpl#requestLayout()</code>，继而调用了 <code>ViewRootImpl#checkThread()</code>。</p>
+</li>
+<li>
+<p>ViewRootImpl 在主线程初始化，因此子线程调用检查线程会抛出异常。</p>
+</li>
+</ol>
+<h2 id=子线程更新-view-不发生异常的情况>子线程更新 View 不发生异常的情况</h2>
+<p>知道了子线程更新 View 发生异常的原因，自然就会想是否有子线程不发生异常的情况。</p>
+<h3 id=针对通用-view-的方案>针对通用 View 的方案</h3>
+<p>根据 <code>View#requestLayout()</code> 的源码：</p>
+<pre><code class=language-java>// android.view.View#requestLayout
+if (mParent != null &amp;&amp; !mParent.isLayoutRequested()) {
+   mParent.requestLayout();
+}
+</code></pre>
+<p>两个条件：<code>mParent != null</code> 和 <code>mParent.isLayoutRequested() == false</code> 都满足才会调用 <code>mParent.requestLayout()</code>，所以可以想办法打破这两个条件。</p>
+<h4 id=在-activityonresume-及以前更新-view>在 <code>Activity#onResume()</code> 及以前更新 View</h4>
+<p>有一条关联 Activity 生命周期的调用链是：<code>ActivityThread#handleResumeActivity()</code> -> <code>ActivityThread#performResumeActivity()</code> -> <code>Activity#performResume()</code> -> <code>Instrumentation#callActivityOnResume()</code> -> <code>Activity#onResume()</code>，因为篇幅和主题原因，不多赘述。</p>
+<p>由调用链可知 ViewRootImpl 在 <code>Activity#onResume()</code> 之后初始化，所以如果在此之前调用 <code>View#requestLayout()</code> 递归到 DecorView 时不满足 <code>mParent != null</code> 而不会调用到 <code>ViewRootImpl#requestLayout()</code>。</p>
+<p>示例代码：</p>
+<pre><code class=language-kotlin>// com.demo.MainActivity
+override fun onCreate(savedInstanceState: Bundle?) {
+   super.onCreate(savedInstanceState)
+   setContentView(R.layout.activity_main)
+   thread { imageView.setBackgroundColor(Color.RED) }
+}
+</code></pre>
+<h4 id=在子线程更新-view-之前先-requestlayout>在子线程更新 View 之前先 requestLayout</h4>
+<p>首先根据 <code>View#isLayoutRequested()</code> 的源码可得与 <code>mPrivateFlags</code> 是否存在 <code>PFLAG_FORCE_LAYOUT</code> 有关：</p>
+<pre><code class=language-java>// android.view.View
+public boolean isLayoutRequested() {
+   return (mPrivateFlags &amp; PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT;
+}
+</code></pre>
+<p>而根据 <code>View#requestLayout()</code> 的源码，可得第一层请求时就会在 <code>mPrivateFlags</code> 加入 <code>PFLAG_FORCE_LAYOUT</code>：</p>
+<pre><code class=language-java>// android.view.View#requestLayout
+mPrivateFlags |= PFLAG_FORCE_LAYOUT;
+mPrivateFlags |= PFLAG_INVALIDATED;
+
+if (mParent != null &amp;&amp; !mParent.isLayoutRequested()) {
+   mParent.requestLayout();
+}
+</code></pre>
+<p>那么是什么时候 <code>mPrivateFlags</code> 去掉 <code>PFLAG_FORCE_LAYOUT</code> 呢？是在 <code>View#layout()</code> 里：</p>
+<pre><code class=language-java>// android.view.View#layout
+mPrivateFlags &amp;= ~PFLAG_FORCE_LAYOUT;
+</code></pre>
+<p>具体的 View 布局流程因为篇幅原因简单概述不做深入源码追踪了：</p>
+<p><code>ViewRootImpl#requestLayout()</code> -> <code>ViewRootImpl#scheduleTraversals()</code> 会最终调用到 <code>ViewRootImpl#performTraversals()</code>，但并不是直接调用的，而是通过 Choreographer 等到下一个 VSYNC 时才调用，<code>ViewRootImpl#performTraversals()</code> -> <code>ViewRootImpl#performLayout()</code> -> <code>View#layout()</code>，所以 <code>mParent.isLayoutRequested()</code> 在下一个 VSYNC 时才会被赋值为 <code>false</code>，无法影响到马上执行的子线程更新 View。</p>
+<p>因此我们可以先主线程调用一次<code>requestLayout()</code>，马上调用子线程更新 View 就不会发生异常了。</p>
+<p>示例代码：</p>
+<pre><code class=language-kotlin>// com.demo.MainActivity
+override fun onCreate(savedInstanceState: Bundle?) {
+   super.onCreate(savedInstanceState)
+   setContentView(R.layout.activity_main)
+   imageView.setOnClickListener {
+      imageView.requestLayout()
+      thread { imageView.setBackgroundColor(Color.RED) }
+   }
+}
+</code></pre>
+<h4 id=子线程初始化-viewrootimpl>子线程初始化 ViewRootImpl</h4>
+<p>ViewRootImpl 初始化在 <code>WindowManagerGlobal#addView()</code> 中，外部能访问到的是 WindowManagerGlobal 是 WindowManager 的代理类，外部通过 <code>WindowManager#addView()</code> 去调用即可。那么只要在子线程初始化 ViewRootImpl，线程检查时就不会报错了。</p>
+<p>示例代码：</p>
+<pre><code class=language-kotlin>// com.demo.MainActivity#onCreate
+button.setOnClickListener {
+   thread {
+         Looper.prepare()
+         val imageView = ImageView(this)
+         windowManager.addView(imageView, WindowManager.LayoutParams())
+         imageView.setBackgroundColor(Color.RED)
+         Looper.loop()
+   }
+}
+</code></pre>
+<p>注意要在 <code>Looper.prepare()</code> 之后调用 <code>WindowManager#addView()</code>，否则会报错：<code>java.lang.RuntimeException: Can't create handler inside thread Thread[xxxx] that has not called Looper.prepare()</code>。</p>
+<p>原因是 ViewRootImpl 初始化的时候会创建一个 Headler，而 Headler 初始化的时候会调用 <code>Looper.prepare()</code>，所以这里要先初始化 Headler，再初始化 ViewRootImpl。</p>
+<h3 id=针对特定-view-的方案>针对特定 View 的方案</h3>
+<p>更新 View 一般会调用两个方法：<code>View#requestLayout()</code> 和 <code>View#invalidate()</code>，如果只调用后者我们可以跟踪一下源码看看会发生什么：</p>
+<pre><code class=language-java>// android.view.View
+public void invalidate(boolean invalidateCache) {
+   invalidateInternal(0, 0, mRight - mLeft, mBottom - mTop, invalidateCache, true);
+}
+
+void invalidateInternal(int l, int t, int r, int b, boolean invalidateCache,
+      boolean fullInvalidate) {
+   ...
+   if ((mPrivateFlags &amp; (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)) == (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)
+            || (invalidateCache &amp;&amp; (mPrivateFlags &amp; PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID)
+            || (mPrivateFlags &amp; PFLAG_INVALIDATED) != PFLAG_INVALIDATED
+            || (fullInvalidate &amp;&amp; isOpaque() != mLastIsOpaque)) {
+      ...
+      final AttachInfo ai = mAttachInfo;
+      final ViewParent p = mParent;
+      if (p != null &amp;&amp; ai != null &amp;&amp; l &lt; r &amp;&amp; t &lt; b) {
+            final Rect damage = ai.mTmpInvalRect;
+            damage.set(l, t, r, b);
+            p.invalidateChild(this, damage);
+      }
+   }
+}
+</code></pre>
+<p><code>p.invalidateChild(this, damage)</code> 表示使 ViewParent 重绘这个 View，所以跟踪一下 ViewGroup 的源码：</p>
+<pre><code class=language-java>// android.view.ViewGroup
+public final void invalidateChild(View child, final Rect dirty) {
+   final AttachInfo attachInfo = mAttachInfo;
+   if (attachInfo != null &amp;&amp; attachInfo.mHardwareAccelerated) {
+      // HW accelerated fast path
+      onDescendantInvalidated(child, child);
+      return;
+   }
+   ...
+}
+</code></pre>
+<p>首先就会判断是否开启了硬件加速，如果开启了会进入硬件加速逻辑：</p>
+<pre><code class=language-java>// android.view.ViewGroup
+public void onDescendantInvalidated(@NonNull View child, @NonNull View target) {
+   ...
+   if (mParent != null) {
+      mParent.onDescendantInvalidated(this, target);
+   }
+}
+</code></pre>
+<p>又是向上递归，我们轻车熟路去找 <code>ViewRootImpl#onDescendantInvalidated()</code> 的实现：</p>
+<pre><code class=language-java>// android.view.ViewRootImpl
+public void onDescendantInvalidated(@NonNull View child, @NonNull View descendant) {
+   if ((descendant.mPrivateFlags &amp; PFLAG_DRAW_ANIMATION) != 0) {
+      mIsAnimating = true;
+   }
+   invalidate();
+}
+
+@UnsupportedAppUsage
+void invalidate() {
+   mDirty.set(0, 0, mWidth, mHeight);
+   if (!mWillDrawSoon) {
+      scheduleTraversals();
+   }
+}
+</code></pre>
+<p>可以看到最后跟 <code>ViewRootImpl#requestLayout()</code> 一样调用到了 <code>ViewRootImpl#scheduleTraversals()</code>，但是却没有调用<code>ViewRootImpl#checkThread()</code>。</p>
+<p>所以我们得到了一个结论：在硬件加速的情况下只调用 <code>View#invalidate()</code> 不会触发线程检查。</p>
+<p>那么在非硬件加速的时候呢？还得返回去看看 <code>ViewGroup#invalidateChild()</code>：</p>
+<pre><code class=language-java>// android.view.ViewGroup#invalidateChild
+do {
+   ...
+   parent = parent.invalidateChildInParent(location, dirty);
+   ...
+} while (parent != null);
+</code></pre>
+<p>循环调用 <code>ViewParent#invalidateChildInParent()</code>，所以去 <code>ViewRootImpl#invalidateChildInParent()</code> 中一探究竟：</p>
+<pre><code class=language-java>// android.view.ViewRootImpl
+public ViewParent invalidateChildInParent(int[] location, Rect dirty) {
+   checkThread();
+   ...
+}
+</code></pre>
+<p>第一行就直接检查线程了，所以非硬件加速的情况下只调用 <code>View#invalidate()</code> 依然会触发线程检查。</p>
+<p>在某些特定 View 的特定更新方法满足特定条件下会只调用 <code>View#invalidate()</code>，如果开启了硬件加速子线程更新就不会崩溃，这种情况需要一一探索，而且受限于版本不同可能会有不同的结果，仅仅举几个例子：</p>
+<h4 id=imageviewsetimagedrawablecolordrawablecolorred><code>imageView.setImageDrawable(ColorDrawable(Color.RED))</code></h4>
+<pre><code class=language-java>// android.widget.ImageView
+public void setImageDrawable(@Nullable Drawable drawable) {
+   if (mDrawable != drawable) {
+      ...
+      final int oldWidth = mDrawableWidth;
+      final int oldHeight = mDrawableHeight;
+
+      updateDrawable(drawable);
+
+      if (oldWidth != mDrawableWidth || oldHeight != mDrawableHeight) {
+            requestLayout();
+      }
+      invalidate();
+   }
+}
+</code></pre>
+<p>如果不修改 Drawable 的固有宽高不变就不会调用 <code>requestLayout()</code>。<code>mDrawableWidth</code> 和 <code>mDrawableHeight</code> 的改变在 <code>updateDrawable()</code>中。</p>
+<pre><code class=language-java> // android.widget.ImageView
+ private void updateDrawable(Drawable d) {
+    ...
+    if (d != null) {
+       ...
+       mDrawableWidth = d.getIntrinsicWidth();
+       mDrawableHeight = d.getIntrinsicHeight();
+       ...
+    } else {
+       mDrawableWidth = mDrawableHeight = -1;
+    }
+ }
+</code></pre>
+<pre><code class=language-java> // android.graphics.drawable.Drawable
+ public int getIntrinsicWidth() {
+      return -1;
+  }
+
+  public int getIntrinsicHeight() {
+      return -1;
+  }
+</code></pre>
+<p>ColorDrawable 并未重写 <code>getIntrinsicWidth()</code> 和 <code>getIntrinsicHeight()</code>， <code>mDrawableWidth</code> 和 <code>mDrawableHeight</code> 一直都是 <code>-1</code>，所以并未调用 <code>requestLayout()</code>。</p>
+<h4 id=textview-在固定尺寸下更新文本>TextView 在固定尺寸下更新文本</h4>
+<p><code>TextView#setText()</code> 中会调用 <code>TextView#checkForRelayout()</code>：</p>
+<pre><code class=language-java>// android.widget.TextView
+private void checkForRelayout() {
+   if ((mLayoutParams.width != LayoutParams.WRAP_CONTENT
+         || (mMaxWidthMode == mMinWidthMode &amp;&amp; mMaxWidth == mMinWidth))
+         &amp;&amp; (mHint == null || mHintLayout != null)
+         &amp;&amp; (mRight - mLeft - getCompoundPaddingLeft() - getCompoundPaddingRight() &gt; 0)) {
+      // 上述三个条件为：
+      // TextView 的宽度是固定的
+      // 没有设置提示文本，或者提示文本已经被渲染完成
+      // TextView 的宽度大于 0
+
+      int oldht = mLayout.getHeight();
+      int want = mLayout.getWidth();
+      int hintWant = mHintLayout == null ? 0 : mHintLayout.getWidth();
+
+      makeNewLayout(want, hintWant, UNKNOWN_BORING, UNKNOWN_BORING,
+               mRight - mLeft - getCompoundPaddingLeft() - getCompoundPaddingRight(),
+               false);
+
+      if (mEllipsize != TextUtils.TruncateAt.MARQUEE) {
+         // 不是跑马灯模式
+         if (mLayoutParams.height != LayoutParams.WRAP_CONTENT
+               &amp;&amp; mLayoutParams.height != LayoutParams.MATCH_PARENT) {
+            // TextView 的高度是固定的
+            autoSizeText();
+            invalidate();
+            return;
+         }
+
+         if (mLayout.getHeight() == oldht
+               &amp;&amp; (mHintLayout == null || mHintLayout.getHeight() == oldht)) {
+            // 没有改变高度
+            autoSizeText();
+            invalidate();
+            return;
+         }
+      }
+
+      requestLayout();
+      invalidate();
+   } else {
+      nullLayouts();
+      requestLayout();
+      invalidate();
+   }
+}
+</code></pre>
+<p>可以看到满足源码中注释的条件就不会触发 <code>View#requestLayout()</code>。</p>
+<h4 id=surfaceview-和-textureview>SurfaceView 和 TextureView</h4>
+<p>这两个 View 是根红苗正用来子线程更新 View 的，SurfaceView 使用自带 Surface 去做画面渲染，TextureView 同样可以通过 <code>TextureView#lockCanvas()</code> 使用临时的 Surface，所以都不会触发 <code>View#requestLayout()</code>。</p>
+<h2 id=总结>总结</h2>
+<p>本文主要着眼于子线程不能更新 UI 和能更新 UI 的底层原理，了解了 Activity View 树的构建流程、更新 UI 的基础流程。但是根据 Android 的设计理念，还是不应使用在子线程中更新 UI，定制化系统常常更改特定的 API 实现方式会直接让上面的“奇技淫巧”成为“不定时炸弹”。</p>
+</div>
+<div class=my-4>
+<a href=/tags/android/ class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Android</a>
+<a href=/tags/%E6%BA%90%E7%A0%81/ class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#源码</a>
+</div>
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+<div>
+</div>
+<div class="md:text-right mt-4 md:mt-0">
+<span class="block font-bold"></span>
+<a href=/posts/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91%E6%95%88%E5%90%8C%E6%AD%A5git%E4%BB%93%E5%BA%93%E5%88%B0github/ class=block>使用阿里云效同步 Git 仓库到 Github</a>
+</div>
+</div>
+</div>
+<div class=col-span-2>
+<div class="sticky top-16 z-10 hidden lg:block px-6 py-4 bg-primary-bg">
+<span class="text-lg font-semibold"></span>
+</div>
+<div class="sticky-toc hidden lg:block px-6 pb-6">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#子线程更新-ui-异常设计理念及简单源码解析>子线程更新 UI 异常设计理念及简单源码解析</a></li>
+<li><a href=#深入源码追踪>深入源码追踪</a>
+<ul>
+<li><a href=#activity-的顶层-view>Activity 的顶层 View</a></li>
+<li><a href=#decorview-的-viewparent>DecorView 的 ViewParent</a></li>
+<li><a href=#viewrootimpl-的-requestlayout>ViewRootImpl 的 requestLayout</a></li>
+</ul>
+</li>
+<li><a href=#子线程更新-view-不发生异常的情况>子线程更新 View 不发生异常的情况</a>
+<ul>
+<li><a href=#针对通用-view-的方案>针对通用 View 的方案</a>
+<ul>
+<li><a href=#在-activityonresume-及以前更新-view>在 <code>Activity#onResume()</code> 及以前更新 View</a></li>
+<li><a href=#在子线程更新-view-之前先-requestlayout>在子线程更新 View 之前先 requestLayout</a></li>
+<li><a href=#子线程初始化-viewrootimpl>子线程初始化 ViewRootImpl</a></li>
+</ul>
+</li>
+<li><a href=#针对特定-view-的方案>针对特定 View 的方案</a>
+<ul>
+<li><a href=#imageviewsetimagedrawablecolordrawablecolorred><code>imageView.setImageDrawable(ColorDrawable(Color.RED))</code></a></li>
+<li><a href=#textview-在固定尺寸下更新文本>TextView 在固定尺寸下更新文本</a></li>
+<li><a href=#surfaceview-和-textureview>SurfaceView 和 TextureView</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#总结>总结</a></li>
+</ul>
+</nav>
+</div>
+<script>window.addEventListener('DOMContentLoaded',()=>{enableStickyToc()})</script>
+</div>
+<div class="col-span-2 lg:col-span-6 bg-secondary-bg rounded p-6">
+<h2 class="text-lg font-semibold mb-4"></h2>
+<div class=content>
+<a href=/posts/%E6%B7%B1%E5%85%A5%E6%BA%90%E7%A0%81%E6%8E%92%E6%9F%A5-flag_activity_new_task-%E5%AF%BC%E8%87%B4%E7%9A%84-activity-%E6%97%A0%E6%B3%95%E6%AD%A3%E5%B8%B8%E5%90%AF%E5%8A%A8/>深入源码排查 FLAG_ACTIVITY_NEW_TASK 导致的 Activity 无法正常启动</a>
+<br>
+<a href=/posts/%E9%81%B5%E5%BE%AA-google-%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97%E7%9A%84-retrofit-+-coroutine-%E5%B0%81%E8%A3%85/>遵循 Google 应用指南的 Retrofit + Coroutine 封装</a>
+<br>
+</div>
+</div>
+</div>
+<script>document.addEventListener('DOMContentLoaded',()=>{hljs.initHighlightingOnLoad()})</script>
+</div>
+</div>
+</main>
+<footer class=pl-scrollbar>
+<div class="w-full max-w-screen-xl mx-auto"><div class="flex flex-col justify-center p-6">
+<a class=mx-auto href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank>
+<img src=https://static.fori.fun/blog/posts/img/cc_by_nc_sa.svg alt="CC BY-NC-SA 4.0" title="本博客均以《署名-非商业性使用-相同方式共享 4.0 国际》协议发布">
+</a>
+<p class="mx-auto pt-2 text-sm text-tertiary-text">&copy; 2022 <a href=https://blog.io01.xyz/>IO01</a>
+&#183; Powered by the <a href=https://github.com/wangchucheng/hugo-eureka class=hover:text-eureka>Eureka</a> theme for <a href=https://gohugo.io class=hover:text-eureka>Hugo</a>
+</p>
+</div></div>
+</footer>
+</body>
+</html>
