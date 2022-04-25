@@ -1,0 +1,200 @@
+<!doctype html><html lang><meta charset=utf-8><meta name=viewport content="width=device-width"><title>从阿里规约谈起 - HashMap 初始化和扩容相关 | IO01 Blog</title><meta name=generator content="Hugo Eureka 0.8.0"><link rel=stylesheet href=/css/eureka.min.css><script defer src=/js/eureka.min.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" as=style onload='this.onload=null,this.rel="stylesheet"'><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css media=print onload='this.media="all",this.onload=null' crossorigin><script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js integrity="sha256-uNYoXefWRqv+PsIF/OflNmwtKM4lStn9yrz2gVl6ymo=" crossorigin></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X media=print onload='this.media="all",this.onload=null' crossorigin><script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin></script>
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script><script defer src=https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js integrity="sha256-Zmpaaj+GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE=" crossorigin></script>
+<link rel=icon type=image/png sizes=32x32 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_32x32_fill_box_center_3.png><link rel=apple-touch-icon sizes=180x180 href=/images/favicon_huc32cac3e9dc2dba9d765d255923cde91_27863_180x180_fill_box_center_3.png><meta name=description content="引言
+日常开发中使用 HashMap 方法如下：
+Map<String, Object> HashMap = new HashMap<>();
+
+但是阿里规约会提示有问题：
+
+由此我们可以看一下 HashMap 初始化和扩容相关。
+注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"/posts/"},{"@type":"ListItem","position":2,"name":"从阿里规约谈起 - HashMap 初始化和扩容相关","item":"/posts/6tf9/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/6tf9/"},"headline":"从阿里规约谈起 - HashMap 初始化和扩容相关 | IO01 Blog","datePublished":"2019-08-30T00:00:00+00:00","dateModified":"2019-08-30T00:00:00+00:00","wordCount":2320,"publisher":{"@type":"Person","name":"C. Wang","logo":{"@type":"ImageObject","url":"/images/favicon.png"}},"description":"\u003ch2 id=\u0022引言\u0022\u003e引言\u003c\/h2\u003e\n\u003cp\u003e日常开发中使用 HashMap 方法如下：\u003c\/p\u003e\n\u003cpre\u003e\u003ccode class=\u0022language-java\u0022\u003eMap\u0026lt;String, Object\u0026gt; HashMap = new HashMap\u0026lt;\u0026gt;();\n\u003c\/code\u003e\u003c\/pre\u003e\n\u003cp\u003e但是阿里规约会提示有问题：\u003c\/p\u003e\n\u003cp\u003e\u003cimg src=\u0022https:\/\/static.fori.fun\/blog\/posts\/img\/p3c_hashmap_error.png\u0022 alt=\u0022未指定初始化容量\u0022\u003e\u003c\/p\u003e\n\u003cp\u003e由此我们可以看一下 HashMap 初始化和扩容相关。\u003c\/p\u003e\n\u003cp\u003e注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。\u003c\/p\u003e"}</script><meta property="og:title" content="从阿里规约谈起 - HashMap 初始化和扩容相关 | IO01 Blog"><meta property="og:type" content="article"><meta property="og:image" content="/images/favicon.png"><meta property="og:url" content="/posts/6tf9/"><meta property="og:description" content="引言
+日常开发中使用 HashMap 方法如下：
+Map<String, Object> HashMap = new HashMap<>();
+
+但是阿里规约会提示有问题：
+
+由此我们可以看一下 HashMap 初始化和扩容相关。
+注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。"><meta property="og:site_name" content="IO01 Blog"><meta property="article:published_time" content="2019-08-30T00:00:00+00:00"><meta property="article:modified_time" content="2019-08-30T00:00:00+00:00"><meta property="article:section" content="posts"><meta property="article:tag" content="Java"><meta property="og:see_also" content="/posts/57fb/"><meta property="og:see_also" content="/posts/23af/"><meta property="og:see_also" content="/posts/28aj/"><body class="flex flex-col min-h-screen"><header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm"><div class="w-full max-w-screen-xl mx-auto"><script>let storageColorScheme=localStorage.getItem("lightDarkMode");((storageColorScheme=="Auto"||storageColorScheme==null)&&window.matchMedia("(prefers-color-scheme: dark)").matches||storageColorScheme=="Dark")&&document.getElementsByTagName("html")[0].classList.add("dark")</script><nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0"><a href=/ class="mr-6 text-primary-text text-xl font-bold">IO01 Blog</a>
+<button id=navbar-btn class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+<i class="fas fa-bars"></i></button><div id=target class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20"><div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0"></div><div class=flex><div class="relative pt-4 md:pt-0"><div class="cursor-pointer hover:text-eureka" id=lightDarkMode><i class="fas fa-adjust"></i></div><div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id=is-open></div><div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40" id=lightDarkOptions><span class="px-4 py-1 hover:text-eureka" name=Light></span>
+<span class="px-4 py-1 hover:text-eureka" name=Dark></span>
+<span class="px-4 py-1 hover:text-eureka" name=Auto></span></div></div></div></div><div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id=is-open-mobile></div></nav><script>let element=document.getElementById("lightDarkMode");storageColorScheme==null||storageColorScheme=="Auto"?document.addEventListener("DOMContentLoaded",()=>{window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",switchDarkMode)}):storageColorScheme=="Light"?(element.firstElementChild.classList.remove("fa-adjust"),element.firstElementChild.setAttribute("data-icon","sun"),element.firstElementChild.classList.add("fa-sun")):storageColorScheme=="Dark"&&(element.firstElementChild.classList.remove("fa-adjust"),element.firstElementChild.setAttribute("data-icon","moon"),element.firstElementChild.classList.add("fa-moon")),document.addEventListener("DOMContentLoaded",()=>{getcolorscheme(),switchBurger()})</script></div></header><main class="flex-grow pt-16"><div class=pl-scrollbar><div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto"><div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12"><div class="col-span-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8"><h1 class="font-bold text-3xl text-primary-text">从阿里规约谈起 - HashMap 初始化和扩容相关</h1><div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text"><div class="mr-6 my-2"><i class="fas fa-calendar mr-1"></i>
+<span>2019-08-30</span></div><div class="mr-6 my-2"><i class="fas fa-th-list mr-1"></i>
+<a href=/series/%E9%98%BF%E9%87%8C%E8%A7%84%E7%BA%A6/ class=hover:text-eureka>阿里规约</a></div></div><div class=content><h2 id=引言>引言</h2><p>日常开发中使用 HashMap 方法如下：</p><pre><code class=language-java>Map&lt;String, Object&gt; HashMap = new HashMap&lt;&gt;();
+</code></pre><p>但是阿里规约会提示有问题：</p><p><img src=https://static.fori.fun/blog/posts/img/p3c_hashmap_error.png alt=未指定初始化容量></p><p>由此我们可以看一下 HashMap 初始化和扩容相关。</p><p>注：本文涉及了少许 HashMap 基础，由于与主线无关，不详讲。源码均加了些注释，注释无法解释清楚的地方放在源码之后论述。</p><h2 id=new>new</h2><pre><code class=language-java>public HashMap() {
+    this.loadFactor = DEFAULT_LOAD_FACTOR;
+}
+
+public HashMap(int initialCapacity, float loadFactor) {
+    //判断异常
+    ...
+    //初始化负载因子
+    this.loadFactor = loadFactor;
+    //初始化阈值
+    this.threshold = tableSizeFor(initialCapacity);
+}
+
+//十分精巧地实现了求一个数的最近的 2 的幂
+static final int tableSizeFor(int cap) {
+    int n = cap - 1;
+    n |= n &gt;&gt;&gt; 1;
+    n |= n &gt;&gt;&gt; 2;
+    n |= n &gt;&gt;&gt; 4;
+    n |= n &gt;&gt;&gt; 8;
+    n |= n &gt;&gt;&gt; 16;
+    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
+</code></pre><p>出人（我自己）意料的是默认构造函数初始化极其简单，只给负载因子赋值，除了直接传入 map 的构造函数外，最复杂的两个参数的构造函数也只是给负载因子和阈值赋值。并未初始化 bucket 数组。</p><p>那么什么时候初始化 bucket 数组的呢？</p><p>很容易想到初始化完 HashMap 我们直接使用 <code>put()</code> 操作。</p><h2 id=put>put</h2><pre><code class=language-java>public V put(K key, V value) {
+    return putVal(hash(key), key, value, false, true);
+}
+
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
+    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; int n, i;
+    //当第一次 put 时，table 尚未初始化，所以 tab 为 null，进行一次 resize() 操作
+    //后续 put 一般不再走该分支
+    if ((tab = table) == null || (n = tab.length) == 0)
+        n = (tab = resize()).length;
+    //确定当前 key 在数组中的下标
+    //此处就是经典的当 n 为 2 的幂时，(n - 1) &amp; hash == hash % n 的技巧
+    //如下部分为碰撞和非碰撞时的储存过程，与本文主题不相关，不再详细论述
+    if ((p = tab[i = (n - 1) &amp; hash]) == null)
+        tab[i] = newNode(hash, key, value, null);
+    else {
+        Node&lt;K,V&gt; e; K k;
+        if (p.hash == hash &amp;&amp;
+            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+            e = p;
+        else if (p instanceof TreeNode)
+            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+        else {
+            for (int binCount = 0; ; ++binCount) {
+                if ((e = p.next) == null) {
+                    p.next = newNode(hash, key, value, null);
+                    if (binCount &gt;= TREEIFY_THRESHOLD - 1) // -1 for 1st
+                        treeifyBin(tab, hash);
+                    break;
+                }
+                if (e.hash == hash &amp;&amp;
+                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
+                    break;
+                p = e;
+            }
+        }
+        if (e != null) { // existing mapping for key
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null)
+                e.value = value;
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }
+    ++modCount;
+    //size 为所有键值对的数量，threshold = capacity * loadFactor
+    //也就是当键值对数量超过了 capacity 的 0.75 倍时，调用 resize() 扩容
+    if (++size &gt; threshold)
+        resize();
+    afterNodeInsertion(evict);
+    return null;
+}
+
+//hash 值并非 key 的 hashCode，而是 hashCode 高低 16 位的异或
+//这样做是为了高低位进行扰动，使得这个 hashCode 能够全部参与对数组索引的计算
+//进一步降低碰撞的概率
+//本文后续提及的 hash 均指 hash(Object key) 之后的值
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+}
+</code></pre><p>通过 <code>putVal()</code> 我们可知，当第一次执行 put 操作时才会调用 <code>resize()</code> 真正初始化 bucket 数组，当键值对超过了 <code>capacity</code> 的 0.75 倍时，调用 <code>resize()</code> 扩容。</p><h2 id=resize>resize</h2><p>那我们就来看看 <code>resize()</code> 是如何扩容的。</p><pre><code class=language-java>final Node&lt;K,V&gt;[] resize() {
+    Node&lt;K,V&gt;[] oldTab = table;
+    int oldCap = (oldTab == null) ? 0 : oldTab.length;
+    int oldThr = threshold;
+    int newCap, newThr = 0;
+    //当 table 不为 null 时 oldCap 大于 0，也就是非初始化，单纯扩容
+    if (oldCap &gt; 0) {
+        //超过最大值时直接把阈值设成 Integer.MAX_VALUE，不再扩容
+        //此时可以继续 put 进键值对，因为键相同 hash 值的不同键值对可以继续以链表形式加入存储
+        if (oldCap &gt;= MAXIMUM_CAPACITY) {
+            threshold = Integer.MAX_VALUE;
+            return oldTab;
+        }
+        //否则就扩容 2 倍
+        else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp; oldCap &gt;= DEFAULT_INITIAL_CAPACITY)
+            newThr = oldThr &lt;&lt; 1; // double threshold
+    }
+    //oldCap == 0，但是 oldThr &gt; 0，一般情况下表示带参构造函数初始化
+    else if (oldThr &gt; 0) // initial capacity was placed in threshold
+        newCap = oldThr;
+    //oldCap == 0，oldThr == 0，表示无参构造函数初始化
+    else { // zero initial threshold signifies using defaults
+        newCap = DEFAULT_INITIAL_CAPACITY;
+        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+    }
+    //初始化新阈值
+    if (newThr == 0) {
+        float ft = (float)newCap * loadFactor;
+        newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; (float)MAXIMUM_CAPACITY ? (int)ft : Integer.MAX_VALUE);
+    }
+    threshold = newThr;
+    @SuppressWarnings({&quot;rawtypes&quot;,&quot;unchecked&quot;})
+        Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];
+    table = newTab;
+    if (oldTab != null) {
+        //将原来的 bucket 数组元素转移至新 bucket 数组中
+        for (int j = 0; j &lt; oldCap; ++j) {
+            Node&lt;K,V&gt; e;
+            if ((e = oldTab[j]) != null) {
+                oldTab[j] = null;
+                //当 bucket 只存在一个键值对时，直接计算下标索引到新的数组中
+                if (e.next == null)
+                    newTab[e.hash &amp; (newCap - 1)] = e;
+                //当 bucket 存在红黑树时，拆分然后映射（涉及红黑树，不做详解）
+                else if (e instanceof TreeNode)
+                    ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);
+                //当 bucket 存在一条链表时，切分成两条链，需要进一步分析
+                else { // preserve order
+                    Node&lt;K,V&gt; loHead = null, loTail = null;
+                    Node&lt;K,V&gt; hiHead = null, hiTail = null;
+                    Node&lt;K,V&gt; next;
+                    do {
+                        next = e.next;
+                        if ((e.hash &amp; oldCap) == 0) {
+                            if (loTail == null)
+                                loHead = e;
+                            else
+                                loTail.next = e;
+                            loTail = e;
+                        }
+                        else {
+                            if (hiTail == null)
+                                hiHead = e;
+                            else
+                                hiTail.next = e;
+                            hiTail = e;
+                        }
+                    } while ((e = next) != null);
+                    //低链下标不变
+                    if (loTail != null) {
+                        loTail.next = null;
+                        newTab[j] = loHead;
+                    }
+                    //高链下标为原下标+原 bucket 数组长度
+                    if (hiTail != null) {
+                        hiTail.next = null;
+                        newTab[j + oldCap] = hiHead;
+                    }
+                }
+            }
+        }
+    }
+    return newTab;
+}
+</code></pre><p><code>reszie()</code> 操作对于扩容分为了三种情况</p><ol><li>bucket 只有一个键值对时，直接计算新的索引位置并插入键值对</li><li>bucket 是红黑树时，调用 <code>split</code> 方法处理。</li><li>bucket 是链表时，分成了两条链表，低位链表插入原位置，高位链表插入原索引+原 bucket 数组长度处</li></ol><p>详讲第三种：</p><p>首先要认知一件事：<strong>当 bucket 成链表时，链表每个节点的 hash 值不一定相同</strong>，它们成为一条链表只因为该 key 的 hash 值取模后得到的值相同。</p><p>第三种情况发生后，有一个特别的优化：<code>(e.hash & oldCap) == 0</code></p><p>当 <code>(e.hash & oldCap) == 0</code> 时插入到原下标位置，否则插入原下标+原 bucket 数组长度处，为何如此插入？如下例子希望可以理解：</p><p>扩容前数组长度 n=16，扩容后 n=32。</p><p>现在有两个 hash：</p><ul><li>hash1=1111 1111 1111 1111 1111 0000 0101</li><li>hash2=1111 1111 1111 1111 1111 0001 0101</li></ul><table><thead><tr><th></th><th style=text-align:right>扩容前</th><th style=text-align:right>扩容后</th></tr></thead><tbody><tr><td>n</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0001 0000</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0010 0000</td></tr><tr><td>n-1</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0000 <font color=green>1111</font></td><td style=text-align:right>0000 0000 0000 0000 0000 0000 000<font color=red>1</font> <font color=green>1111</font></td></tr><tr><td>hash1</td><td style=text-align:right>1111 1111 1111 1111 1111 1111 0000 <font color=green>0101</font></td><td style=text-align:right>1111 1111 1111 1111 1111 1111 000<font color=red>0</font> <font color=green>0101</font></td></tr><tr><td>数组下标<br>hash1&(n-1)</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0000 <font color=green>0101</font><br>=5</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 000<font color=red>0</font> <font color=green>0101</font><br>=5</td></tr></tbody></table><table><thead><tr><th></th><th style=text-align:right>扩容前</th><th style=text-align:right>扩容后</th></tr></thead><tbody><tr><td>n</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0001 0000</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0010 0000</td></tr><tr><td>n-1</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0000 <font color=green>1111</font></td><td style=text-align:right>0000 0000 0000 0000 0000 0000 000<font color=red>1</font> <font color=green>1111</font></td></tr><tr><td>hash2</td><td style=text-align:right>1111 1111 1111 1111 1111 1111 0001 <font color=green>0101</font></td><td style=text-align:right>1111 1111 1111 1111 1111 1111 000<font color=red>1</font> <font color=green>0101</font></td></tr><tr><td>数组下标<br>hash2&(n-1)</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 0000 <font color=green>0101</font><br>=5</td><td style=text-align:right>0000 0000 0000 0000 0000 0000 000<font color=red>1</font> <font color=green>0101</font><br>=5+16（原下标+原 bucket 数组长度）</td></tr></tbody></table><p>绿色为参与运算的位，红色为由于扩容而增加参与运算的位。</p><p>当扩容以后，数组的长度的高位多了一位 <code>1</code> 参与计算索引下标，所以只需要计算 <code>n&hash</code>，如果为 <code>0</code> 时，扩容导致的新增最高位不影响原下标计算结果，否则新下标为原下标+原 bucket 数组长度。使用该算法后不必每个节点都重新计算下标，大大提高了性能。</p><h2 id=总结>总结</h2><ul><li>HashMap 初始化时不会初始化 bucket 数组，当第一次 put 时才会初始化，而且会初始化为离传入值的最近的 2 的幂。</li><li>当数据量大于 bucket 数组的 75%时，扩容为原来的 2 倍。</li><li>扩容+数据移动是耗费资源的操作，所以我们一开始应该初始化合适的值，防止多次扩容。合适值阿里规约中已经给出：<code>initialCapacity =（需要存储的元素个数 / 负载因子）+ 1</code>。</li><li>计算阈值的 <code>tableSizeFor()</code>、计算下标的 <code>hash&(n-1)</code> 取模、扩容时高低链表分别插入的 <code>(e.hash & oldCap) == 0</code> 和计算插入下标<strong>设计十分精妙</strong>，观之感叹不已！！！</li></ul></div><div class=my-4><a href=/tags/java/ class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Java</a></div><div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t"><div><span class="block font-bold"></span>
+<a href=/posts/23af/ class=block>从阿里规约谈起 - Arrays.asList 三坑</a></div><div class="md:text-right mt-4 md:mt-0"><span class="block font-bold"></span>
+<a href=/posts/28aj/ class=block>从阿里规约谈起 - 禁用 Executors 创建线程池</a></div></div></div><div class=col-span-2><div class="bg-secondary-bg rounded p-6"><h3 class="text-lg font-semibold mb-4"></h3><div class=content><a href=/posts/57fb/>从阿里规约谈起 - 包装类的值比较注意事项</a><br><a href=/posts/23af/>从阿里规约谈起 - Arrays.asList 三坑</a><br><a href=/posts/6tf9/>从阿里规约谈起 - HashMap 初始化和扩容相关</a><br><a href=/posts/28aj/>从阿里规约谈起 - 禁用 Executors 创建线程池</a><br></div></div><div class="sticky top-16 z-10 hidden lg:block px-6 py-4 bg-primary-bg"><span class="text-lg font-semibold"></span></div><div class="sticky-toc hidden lg:block px-6 pb-6"><nav id=TableOfContents><ul><li><a href=#引言>引言</a></li><li><a href=#new>new</a></li><li><a href=#put>put</a></li><li><a href=#resize>resize</a></li><li><a href=#总结>总结</a></li></ul></nav></div><script>window.addEventListener("DOMContentLoaded",()=>{enableStickyToc()})</script></div><div class="col-span-2 lg:col-span-6 bg-secondary-bg rounded p-6"><h2 class="text-lg font-semibold mb-4"></h2><div class=content><a href=/posts/28aj/>从阿里规约谈起 - 禁用 Executors 创建线程池</a><br></div></div></div><script>document.addEventListener("DOMContentLoaded",()=>{hljs.initHighlightingOnLoad()})</script></div></div></main><footer class=pl-scrollbar><div class="w-full max-w-screen-xl mx-auto"><div class="flex flex-col justify-center p-6"><a class=mx-auto href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh target=_blank><img src=https://static.fori.fun/blog/posts/img/cc_by_nc_sa.svg alt="CC BY-NC-SA 4.0" title="本博客均以《署名-非商业性使用-相同方式共享 4.0 国际》协议发布"></a><p class="mx-auto pt-2 text-sm text-tertiary-text">&copy; 2022 <a href=https://blog.io01.xyz/>IO01</a>
+&#183; Powered by the <a href=https://github.com/wangchucheng/hugo-eureka class=hover:text-eureka>Eureka</a> theme for <a href=https://gohugo.io class=hover:text-eureka>Hugo</a></p></div></div></footer></body></html>
