@@ -1,1 +1,4 @@
 User-agent: *
+Allow: /
+
+Sitemap: https://blog.io01.xyz/sitemap.xml
